@@ -1,0 +1,181 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// to update Prisma.Client: npx prisma generate
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  name          String
+  requestedRole enumRole?      @default(guest)
+  role          enumRole       @default(guest)
+  isActive      Boolean        @default(false)
+  salt          String?
+  password      String
+  sessionToken  String?
+  createdAt     DateTime       @default(now())
+  createdBy     String
+  updatedAt     DateTime?      @updatedAt
+  updatedBy     String?
+  deleted       DateTime?
+  deletedBy     String?
+  Procurement1  Procurements[] @relation("createdByUserId")
+  Procurement2  Procurements[] @relation("updatedByUserId")
+  Sales1        Sales[]        @relation("createdByUserId")
+  Sales2        Sales[]        @relation("updatedByUserId")
+  Customer1     Customers[]    @relation("createdByUserId")
+  Customer2     Customers[]    @relation("updatedByUserId")
+  Supplier1     Suppliers[]    @relation("createdByUserId")
+  Supplier2     Suppliers[]    @relation("updatedByUserId")
+  Product1      Products[]     @relation("createdByUserId")
+  Product2      Products[]     @relation("updatedByUserId")
+  Shipper1      Shippers[]     @relation("createdByUserId")
+  Shipper2      Shippers[]     @relation("updatedByUserId")
+}
+
+model Procurements {
+  id          Int                @id @default(autoincrement())
+  sqc         Int                @default(1)
+  transaction enumProcurementTrx
+  supplierId  Int
+  productId   Int
+  quantityKg  Int
+  unitPrice   Decimal
+  stockTo     String //Allocation
+  trxStatus   enumProcurementSta
+  createdAt   DateTime           @default(now())
+  createdBy   String
+  updatedAt   DateTime?          @updatedAt
+  updatedBy   String?
+  deleted     DateTime?
+  deletedBy   String?
+  User1       Users              @relation("createdByUserId", fields: [createdBy], references: [id])
+  User2       Users?             @relation("updatedByUserId", fields: [updatedBy], references: [id])
+  Supplier    Suppliers          @relation(fields: [supplierId], references: [id])
+  Product     Products           @relation(fields: [productId], references: [id])
+}
+
+model Sales {
+  id         Int          @id @default(autoincrement())
+  sqc        Int          @default(1)
+  salesDate  DateTime
+  customerId Int
+  productId  Int
+  quantityKg Int
+  soldprice  Decimal
+  stockOf    String //Allocation
+  trxStatus  enumSalesSta
+  createdAt  DateTime     @default(now())
+  createdBy  String
+  updatedAt  DateTime?    @updatedAt
+  updatedBy  String?
+  deleted    DateTime?
+  deletedBy  String?
+  Customer   Customers    @relation(fields: [customerId], references: [id])
+  Product    Products     @relation(fields: [productId], references: [id])
+  User1      Users        @relation("createdByUserId", fields: [createdBy], references: [id])
+  User2      Users?       @relation("updatedByUserId", fields: [updatedBy], references: [id])
+}
+
+model Customers {
+  id          Int       @id @default(autoincrement())
+  name        String
+  phone       String?
+  unloadPoint String?
+  createdAt   DateTime  @default(now())
+  createdBy   String
+  updatedAt   DateTime? @updatedAt
+  updatedBy   String?
+  deleted     DateTime?
+  deletedBy   String?
+  User1       Users     @relation("createdByUserId", fields: [createdBy], references: [id])
+  User2       Users?    @relation("updatedByUserId", fields: [updatedBy], references: [id])
+  Sales       Sales[]
+}
+
+enum enumRole {
+  admin
+  customer
+  employee
+  guest
+}
+
+enum enumProcurementTrx {
+  Beli
+  Transfer
+  Pinjam
+}
+
+enum enumProcurementSta {
+  PO
+  Muat
+  Diterima
+}
+
+enum enumSalesSta {
+  Pesan
+  Proses
+  Muat
+  Diterima
+}
+
+model Suppliers {
+  id          Int            @id @default(autoincrement())
+  name        String
+  createdAt   DateTime       @default(now())
+  createdBy   String
+  updatedAt   DateTime?      @updatedAt
+  updatedBy   String?
+  deleted     DateTime?
+  deletedBy   String?
+  User1       Users          @relation("createdByUserId", fields: [createdBy], references: [id])
+  User2       Users?         @relation("updatedByUserId", fields: [updatedBy], references: [id])
+  Procurement Procurements[]
+}
+
+model Products {
+  id          Int            @id @default(autoincrement())
+  alias       String
+  name        String
+  createdAt   DateTime       @default(now())
+  createdBy   String
+  updatedAt   DateTime?      @updatedAt
+  updatedBy   String?
+  deleted     DateTime?
+  deletedBy   String?
+  User1       Users          @relation("createdByUserId", fields: [createdBy], references: [id])
+  User2       Users?         @relation("updatedByUserId", fields: [updatedBy], references: [id])
+  Procurement Procurements[]
+  Sales       Sales[]
+}
+
+model Shippers {
+  id           Int       @id @default(autoincrement())
+  updatedBy    String?
+  companyName  String
+  contactName  String?
+  contactPhone String?
+  createdAt    DateTime  @default(now())
+  createdBy    String
+  updatedAt    DateTime? @updatedAt
+  deleted      DateTime?
+  deletedBy    String?
+  User1        Users     @relation("createdByUserId", fields: [createdBy], references: [id])
+  User2        Users?    @relation("updatedByUserId", fields: [updatedBy], references: [id])
+}
+
+// MIGRATION UPDATE HISTORY
+
+// name: Edit-User-role
+// Desc: 
+// add requestedRole fields in users table. Edit default to guest
+// change enumRole from [ADMIN, USER] into [admin, customer, employee, guest]

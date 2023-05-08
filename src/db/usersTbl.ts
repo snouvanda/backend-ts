@@ -1,0 +1,175 @@
+import { PrismaClient, Prisma } from "@prisma/client"
+import { enumRole } from "@prisma/client"
+
+import { merge } from "lodash"
+
+const prisma = new PrismaClient()
+const defaultCreator: string = process.env.DEFAULT_CREATOR || "enviro-dv"
+let userRole: enumRole
+
+const defaultFields = {
+  id: true,
+  email: true,
+  name: true,
+  role: true,
+  isActive: true,
+  createdAt: true,
+  createdBy: true,
+  updatedAt: true,
+  updatedBy: true,
+}
+
+const deletionFields = {
+  id: true,
+  deleted: true,
+  deletedBy: true,
+}
+
+const activeRowCriteria = {
+  deleted: null,
+  deletedBy: null,
+}
+
+const deletedRowCriteria = {
+  deleted: { not: null },
+  deletedBy: { not: null },
+}
+
+export const getUsers = async () => {
+  const users = await prisma.users.findMany({
+    where: activeRowCriteria,
+    select: defaultFields,
+  })
+  return users
+}
+
+export const getUserById = async (id: string) => {
+  const user = await prisma.users.findFirst({
+    where: merge({ id: id }, activeRowCriteria),
+    select: defaultFields,
+  })
+  return user
+}
+
+export const getUserByEmail = async (email: string) => {
+  const user = await prisma.users.findFirst({
+    where: merge({ email: email }, activeRowCriteria),
+    select: defaultFields,
+  })
+  return user
+}
+
+export const isEmailExists = async (email: string) => {
+  const user = await prisma.users.findUnique({
+    where: merge({ email: email }, activeRowCriteria),
+    select: { id: true },
+  })
+  return user
+}
+
+export const getUserAuthenticationByEmail = async (email: string) => {
+  const userAuth = await prisma.users.findFirst({
+    where: merge({ email: email }, activeRowCriteria),
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      role: true,
+      isActive: true,
+      salt: true,
+      password: true,
+      sessionToken: true,
+    },
+  })
+  return userAuth
+}
+
+export const getUserBySessionToken = async (sessionToken: string) => {
+  const user = await prisma.users.findFirst({
+    where: merge({ sessionToken: sessionToken }, activeRowCriteria),
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      role: true,
+      isActive: true,
+      sessionToken: true,
+    },
+  })
+  return user
+}
+
+export const getDeletedUserById = async (id: string) => {
+  const deletedUser = await prisma.users.findMany({
+    where: merge({ id: id }, deletedRowCriteria),
+    select: deletionFields,
+  })
+  return deletedUser
+}
+
+export const saveSessionToken = async (values: Record<string, any>) => {
+  const { email, salt, sessionToken } = values
+
+  const user = await prisma.users.update({
+    where: { email: email },
+    data: {
+      salt: salt,
+      sessionToken: sessionToken,
+    },
+  })
+}
+
+export const createUser = async (values: Record<string, any>) => {
+  const {
+    email,
+    name,
+    requestedRole,
+    role,
+    isActive,
+    salt,
+    password,
+    createdBy,
+  } = values
+
+  let creator: string
+
+  if (!createdBy) {
+    creator = defaultCreator
+  } else {
+    creator = createdBy
+  }
+
+  const user = await prisma.users.create({
+    data: {
+      email: email,
+      name: name,
+      requestedRole: requestedRole,
+      role: role,
+      isActive: isActive,
+      salt: salt,
+      password: password,
+      createdBy: creator,
+    },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      isActive: true,
+    },
+  })
+  return user
+}
+
+export const deleteUserById = async (values: Record<string, any>) => {
+  const { id, deletedBy } = values
+  const softDeletedUser = await prisma.users.update({
+    where: merge({ id: id }, activeRowCriteria),
+    data: {
+      deleted: new Date(),
+      deletedBy: deletedBy,
+    },
+    select: deletionFields,
+  })
+
+  return softDeletedUser
+}
