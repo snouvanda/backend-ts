@@ -11,12 +11,21 @@ const defaultFields = {
   id: true,
   email: true,
   name: true,
+  phone: true,
+  requestedRole: true,
   role: true,
   isActive: true,
+  regApproval: true,
   createdAt: true,
   createdBy: true,
   updatedAt: true,
   updatedBy: true,
+}
+
+const credentialFields = {
+  salt: true,
+  password: true,
+  sessionToken: true,
 }
 
 const deletionFields = {
@@ -59,8 +68,16 @@ export const getUserByEmail = async (email: string) => {
   return user
 }
 
+export const validateUserByEmail = async (email: string) => {
+  const user = await prisma.users.findFirst({
+    where: merge({ email: email }, activeRowCriteria),
+    select: merge(defaultFields, credentialFields),
+  })
+  return user
+}
+
 export const isEmailExists = async (email: string) => {
-  const user = await prisma.users.findUnique({
+  const user = await prisma.users.findFirst({
     where: merge({ email: email }, activeRowCriteria),
     select: { id: true },
   })
@@ -123,6 +140,7 @@ export const createUser = async (values: Record<string, any>) => {
   const {
     email,
     name,
+    phone = null,
     requestedRole,
     role,
     isActive,
@@ -143,9 +161,11 @@ export const createUser = async (values: Record<string, any>) => {
     data: {
       email: email,
       name: name,
+      phone: phone,
       requestedRole: requestedRole,
       role: role,
       isActive: isActive,
+      regApproval: "pending",
       salt: salt,
       password: password,
       createdBy: creator,
@@ -154,9 +174,44 @@ export const createUser = async (values: Record<string, any>) => {
       id: true,
       email: true,
       name: true,
+      requestedRole: true,
+      role: true,
       isActive: true,
+      regApproval: true,
     },
   })
+  return user
+}
+
+export const updateUser = async (values: Record<string, any>) => {
+  const { ...target } = values.target
+  const { ...payload } = values.payload
+
+  console.log("target", target)
+  console.log("payload", payload)
+
+  let criteria = {}
+
+  if (target.email) {
+    criteria = { email: target.email }
+  } else if (target.id) {
+    criteria = { id: target.id }
+  }
+
+  const user = await prisma.users.update({
+    where: criteria,
+    data: payload,
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      requestedRole: true,
+      role: true,
+      isActive: true,
+      regApproval: true,
+    },
+  })
+
   return user
 }
 

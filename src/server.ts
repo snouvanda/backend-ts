@@ -6,11 +6,14 @@ import compression from "compression"
 import cors from "cors"
 import dotenv from "dotenv"
 import router from "./router"
+import { errorHandler } from "./middlewares/errorHandlerMwr"
 
 dotenv.config()
 
 const app = express()
 const PORT = process.env.APP_PORT || 5002
+
+app.use(errorHandler)
 
 app.use(cors({ credentials: true }))
 
@@ -24,4 +27,8 @@ server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT} `)
 })
 
-app.use("/", router())
+app.get("/", (req, res) => {
+  res.send("Welcome to Soya Prima Solusi API Services")
+})
+
+app.use("/toko-soya", router())

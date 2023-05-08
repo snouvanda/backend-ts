@@ -16,9 +16,11 @@ model Users {
   id            String         @id @default(uuid())
   email         String         @unique
   name          String
+  phone         String?
   requestedRole enumRole?      @default(guest)
   role          enumRole       @default(guest)
   isActive      Boolean        @default(false)
+  regApproval   enumApproval   @default(pending)
   salt          String?
   password      String
   sessionToken  String?
@@ -109,6 +111,12 @@ enum enumRole {
   guest
 }
 
+enum enumApproval {
+  approved
+  denied
+  pending
+}
+
 enum enumProcurementTrx {
   Beli
   Transfer
@@ -175,7 +183,26 @@ model Shippers {
 
 // MIGRATION UPDATE HISTORY
 
-// name: Edit-User-role
-// Desc: 
+// MigrationName: 
+// At-----------: 
+// Description--: 
+// 
+
+// MigrationName: Edit-Users-RegistrationApproval
+// At-----------: 20230508182756
+// Description--: 
+// add RegApproval in users table. default pending
+// add enumApproval [approved, denied, pending]
+// new user with pending approval can update registration in front page.
+// approved user only can update registration in profile page.
+
+// MigrationName: Edit-Users-phone
+// At-----------: 20230508165210
+// Description--: 
+// add phone field in users table. Mandatory for admin, employee, customer role
+
+// MigrationName: Edit-User-role
+// At-----------: 20230508132047
+// Description--: 
 // add requestedRole fields in users table. Edit default to guest
 // change enumRole from [ADMIN, USER] into [admin, customer, employee, guest]
