@@ -174,6 +174,7 @@ export const createUser = async (values: Record<string, any>) => {
       id: true,
       email: true,
       name: true,
+      phone: true,
       requestedRole: true,
       role: true,
       isActive: true,

@@ -1,50 +1,89 @@
+import { NextFunction, Request, Response } from "express"
+import { merge } from "lodash"
+import jwt from "jsonwebtoken"
+import { hashPassword, random, comparePassword } from "../helpers/authHelper"
+import {
+  isPasswordValid,
+  isRoleValid,
+  isRegistrationInputsValid,
+} from "../helpers/dataValidationHelper"
+import dra, { setFault } from "../helpers/messageHelper" //developer recommended action after error occured.
 import {
   createUser,
   validateUserByEmail,
   isEmailExists,
   updateUser,
-} from "../db/usersTbl"
-import { Request, Response } from "express"
-import { hashPassword, random } from "../helpers"
-import { merge } from "lodash"
+} from "../db/usersData"
 
 export const registerUser = async (req: Request, res: Response) => {
   try {
     // Prepare inputs.
-
-    const { email, name, phone = null, password, requestedRole } = req.body
+    const { email, name, phone, password, requestedRole } = req.body
 
     //
     // Validate inputs.
-
-    if (!email || !name || !requestedRole || !password) {
-      return res
-        .status(400)
-        .json({ message: "All mandatory fields are required." })
+    if (!email || !name || !password || !requestedRole) {
+      let fault = setFault(
+        "All mandatory fields are required.",
+        dra.b2_signup_p,
+      )
+      return res.status(400).json(fault)
     }
 
-    if (requestedRole !== "guest" && phone === null) {
-      return res
-        .status(400)
-        .json({ message: "Phone required for requested role." })
+    //
+    // Validate inputs value
+    console.log("validating input value")
+    const inputFault = await isRegistrationInputsValid(
+      email,
+      name,
+      password,
+      requestedRole,
+      phone,
+    )
+
+    if (!("valid" in inputFault)) {
+      console.log("Faulted")
+      return res.status(400).json(inputFault)
     }
 
     //
     // Check if email already registered.
+    const emailExists = await isEmailExists(email)
 
-    const emailExist = await isEmailExists(email)
-
-    if (emailExist) {
-      return res.status(400).json({ message: "Email already registered." })
+    if (emailExists) {
+      let fault = setFault("Email already registered.", dra.b2_signup_p)
+      return res.status(400).json(fault)
     }
 
     //
     // Create user
-
+    console.log("creating salt")
     const salt = random()
-    const hashedPassword = hashPassword(salt, password)
+    console.log(`salt done (len:${salt.length}). Now hashing password`)
 
-    const userCreated = await createUser({
+    // const hashedPassword = hashPassword(salt, password)
+    const hashedPassword = hashPassword(salt, password)
+    console.log(`hashed password done. (len:${hashedPassword.length})`)
+    console.log("check hashed password is valid")
+    if (!comparePassword(salt, password, hashedPassword)) {
+      console.log("hashed password is invalid")
+    } else {
+      console.log("hashed password is valid")
+    }
+
+    console.log("trying to log in")
+    await login(req, res, {
+      id: "lkdaflk",
+      email: email,
+      role: "gues",
+      hashedPassword,
+    })
+    console.log("login success")
+
+    // if (true)
+    //   return res.send(200).json({ message: "after login in register function" })
+    console.log("add user to database")
+    const user = await createUser({
       email: email,
       name: name,
       phone: phone,
@@ -57,15 +96,64 @@ export const registerUser = async (req: Request, res: Response) => {
       createdBy: null,
     })
 
-    // return respond
-    // userCreated: {id, email, name, isActive}
+    //
+    // log in user
 
-    return res.status(200).json(userCreated).end()
+    // return respond
+    // userCreated: {id, email, name, phone, requestedRole, role, isActive, regApproval}
+    return res.status(201).json(user).end()
+
     //
   } catch (error) {
     console.log(error)
     return res.sendStatus(400)
   }
+}
+
+export const login = async (
+  req: Request,
+  res: Response,
+  registration?: {
+    id: string
+    email: string
+    role: string
+    hashedPassword: string
+  },
+  next?: NextFunction,
+) => {
+  let xid: string,
+    xemail: string,
+    xrole: string,
+    xpassword: string,
+    xhpassword: string
+  if (registration) {
+    const { id, email, role, hashedPassword } = registration
+    xid = id
+    xemail = email
+    xrole = role
+    xhpassword = hashedPassword
+    xpassword = "<skip by registration>>" //not use but pre-assigned to prevent error
+  } else {
+    const { id, email, role, password } = req.body
+    xid = id
+    xemail = email
+    xrole = role
+    xpassword = password
+    xhpassword = "<skip by request.body>" //not use but pre-assigned to prevent error
+  }
+
+  console.log("xid:", xid)
+  console.log("xemail:", xemail)
+  console.log("xrole", xrole)
+  console.log("xpassword", xpassword)
+  console.log("xhpassword", xhpassword)
+
+  if (registration) {
+    console.log("login and continue next function")
+    next
+  }
+
+  return xid
 }
 
 export const updateRegistration = async (req: Request, res: Response) => {
@@ -166,7 +254,7 @@ export const updateRegistration = async (req: Request, res: Response) => {
     // return respond
     // id, email, name, requestedRole, role, isActive, regApproval, passwordChanged
 
-    return res.status(200).json(
+    return res.status(201).json(
       merge(userUpdated, {
         passwordChanged: hashedPassword.length > 10 ? true : false,
       }),
@@ -177,5 +265,3 @@ export const updateRegistration = async (req: Request, res: Response) => {
     return res.sendStatus(400)
   }
 }
-
-export const login = () => {}

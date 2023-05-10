@@ -6,7 +6,7 @@ import compression from "compression"
 import cors from "cors"
 import dotenv from "dotenv"
 import router from "./router"
-import { errorHandler } from "./middlewares/errorHandlerMwr"
+import { errorHandler } from "./middlewares/errorHandlerMW"
 
 dotenv.config()
 

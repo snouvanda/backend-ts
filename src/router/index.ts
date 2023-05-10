@@ -1,6 +1,6 @@
 import express from "express"
-import home from "./homeRtr"
-import authentication from "./authenticationRtr"
+import home from "./homeRouter"
+import authentication from "./authRouter"
 // import users from "./users"
 
 const router = express.Router()

@@ -1,11 +1,8 @@
 import express, { Request, Response } from "express"
-import {
-  registerUser,
-  updateRegistration,
-} from "../controllers/authenticationCtr"
+import { registerUser, updateRegistration } from "../controllers/authController"
 
 export default (router: express.Router) => {
   router.post("/auth/register", registerUser)
   router.patch("/auth/register", updateRegistration)
-  router.post("/auth/login")
+  // router.post("/auth/login")
 }
