@@ -8,6 +8,8 @@ import {
 } from "../repositories/usersRepo"
 
 export const registerUser = async (req: Request, res: Response) => {
+  console.log("")
+  console.log("User try to register")
   try {
     // Prepare inputs.
     const { email, name, phone, password, requestedRole } = req.body
@@ -77,6 +79,7 @@ export const registerUser = async (req: Request, res: Response) => {
     // return respond
     // user: {id, email, name, phone, requestedRole,
     // role, isActive, regApproval}
+    console.log("Register completed.")
     return res.status(201).json(newUser).end()
 
     //

@@ -2,9 +2,6 @@ import crypto from "crypto"
 import jwt from "jsonwebtoken"
 import { JWTPayload } from "../types/custom"
 
-const secretKey: string = process.env.SECRET_KEY!
-const accessTokenSecret: string = process.env.ACCESS_TOKEN_SECRET!
-const refreshTokenSecret: string = process.env.REFRESH_TOKEN_SECRET!
 const accessTokenExpiry: string = "30s"
 const refreshTokenExpiry: string = "60s"
 
@@ -43,7 +40,6 @@ export const decodeAccessToken = async (token: string): Promise<any> => {
     if (err) {
       return null
     }
-
     return decoded
   })
 }
@@ -56,7 +52,6 @@ export const decodeRefreshToken = async (token: string): Promise<any> => {
       if (err) {
         return null
       }
-
       return decoded
     },
   )

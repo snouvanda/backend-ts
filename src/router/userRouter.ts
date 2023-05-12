@@ -1,7 +1,8 @@
 import express, { Request, Response } from "express"
-import { verifyJWT } from "../middlewares/verifyJWTMiddleware"
+import { isAuthenticated } from "../middlewares/aunthenticatorMW"
+import { isAuthorized } from "../middlewares/authorizerMW"
 import { getAllUsers } from "../controllers/usersController"
 
 export default (router: express.Router) => {
-  router.get("/users", verifyJWT, getAllUsers)
+  router.get("/users", isAuthenticated, isAuthorized, getAllUsers)
 }

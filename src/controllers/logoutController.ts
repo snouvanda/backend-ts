@@ -5,10 +5,9 @@ import {
 } from "../repositories/usersRepo"
 
 export const handleLogout = async (req: Request, res: Response) => {
+  console.log("")
+  console.log("User try to logout...")
   // notif for client app/FE: also delete accessToken
-
-  console.log("executing handleLogout ...") //LOG
-
   // check if cookies exists
   const cookies = req.cookies
   if (!cookies.jwt) {
@@ -49,9 +48,6 @@ export const handleLogout = async (req: Request, res: Response) => {
   })
   console.log(`cookie.jwt: ${JSON.stringify(cookies)}`) //LOG
 
-  console.log("logout completed") //LOG
-  console.log("closing handleLogout ...") //LOG
-  console.log("") //LOG
-
+  console.log(`User ${foundUser?.email} logged out`) //LOG
   return res.sendStatus(204) // No content
 }
