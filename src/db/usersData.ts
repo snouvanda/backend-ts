@@ -25,7 +25,6 @@ const defaultFields = {
 const credentialFields = {
   salt: true,
   password: true,
-  sessionToken: true,
 }
 
 const deletionFields = {
@@ -76,6 +75,22 @@ export const validateUserByEmail = async (email: string) => {
   return user
 }
 
+export const getUserAuthByEmail = async (email: string) => {
+  const user = await prisma.users.findFirst({
+    where: merge({ email: email }, activeRowCriteria),
+    select: { id: true, role: true, salt: true, password: true },
+  })
+  return user
+}
+
+export const validateAuthById = async (email: string) => {
+  const user = await prisma.users.findFirst({
+    where: merge({ email: email }, activeRowCriteria),
+    select: { id: true, password: true },
+  })
+  return user
+}
+
 export const isEmailExists = async (email: string) => {
   const user = await prisma.users.findFirst({
     where: merge({ email: email }, activeRowCriteria),
@@ -95,7 +110,7 @@ export const getUserAuthenticationByEmail = async (email: string) => {
       isActive: true,
       salt: true,
       password: true,
-      sessionToken: true,
+      //refreshTokens: true,
     },
   })
   return userAuth
@@ -110,7 +125,7 @@ export const getUserBySessionToken = async (sessionToken: string) => {
       name: true,
       role: true,
       isActive: true,
-      sessionToken: true,
+      //refreshTokens: true,
     },
   })
   return user
@@ -125,13 +140,13 @@ export const getDeletedUserById = async (id: string) => {
 }
 
 export const saveSessionToken = async (values: Record<string, any>) => {
-  const { email, salt, sessionToken } = values
+  const { email, salt, refreshToken } = values
 
   const user = await prisma.users.update({
     where: { email: email },
     data: {
       salt: salt,
-      sessionToken: sessionToken,
+      //refreshTokens: refreshToken,
     },
   })
 }
