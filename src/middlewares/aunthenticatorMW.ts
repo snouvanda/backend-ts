@@ -20,6 +20,7 @@ export const isAuthenticated = async (
   if (!decoded) return res.sendStatus(403)
   req.jwtPayload = decoded
 
-  console.log("authenticated")
+  console.log("authenticated to")
+  console.log(req.jwtPayload)
   next()
 }

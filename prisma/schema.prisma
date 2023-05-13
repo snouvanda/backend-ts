@@ -60,9 +60,11 @@ model Users {
 }
 
 model Tokens {
-  refreshToken String @id @unique
+  id           String   @id @default(uuid())
+  refreshToken String   @unique @db.VarChar(360)
   userId       String
-  User         Users  @relation("userId", fields: [userId], references: [id])
+  createdAt    DateTime @default(now())
+  User         Users    @relation("userId", fields: [userId], references: [id])
 
   @@index([refreshToken])
 }
@@ -224,6 +226,21 @@ model Shippers {
 // At-----------: 
 // Description--: 
 // 
+
+// MigrationName: Add-Timestamp-Tokens-table
+// At-----------: 20230513131506_add_timestamp_tokens_table
+// Description--: 
+// add createdAt to tokens table
+
+// MigrationName: Resize-refreshToken-field
+// At-----------: 20230513092842
+// Description--: 
+// resize refreshToken field → varchar(360)
+
+// MigrationName: Edit-Tokens-table
+// At-----------: 20230513082559
+// Description--: 
+// add id field in tokens table
 
 // MigrationName: Move-refreshToken-to-Tokens-table
 // At-----------: 20230512112143

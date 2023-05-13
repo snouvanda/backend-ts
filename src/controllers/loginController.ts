@@ -5,8 +5,12 @@ import {
   createRefresToken,
 } from "../helpers/authHelper"
 import dra, { setFault } from "../helpers/faultMsgHelper" //developer recommended action after error occured.
-import { getUserAuthenticationByEmail } from "../repositories/usersRepo"
+import {
+  getUserAuthenticationByEmail,
+  saveRefreshToken,
+} from "../repositories/usersRepo"
 import { encRole } from "../config/roles_list"
+import { cookieStandarOption } from "../config/cookie_option"
 
 // LOGIN
 export const handleLogin = async (req: Request, res: Response) => {
@@ -44,14 +48,13 @@ export const handleLogin = async (req: Request, res: Response) => {
   const accessToken = await createAccessToken(payload)
   const refreshToken = await createRefresToken(payload)
 
-  // save refreshToken in cookie (jwt)
-  const jwtcookie = res.cookie("jwt", refreshToken, {
-    httpOnly: true,
-    secure: true,
-    maxAge: 24 * 60 * 60 * 1000,
-  })
+  // save refreshToken in db
+  const savedToken = await saveRefreshToken(refreshToken, foundUser.id)
+  if (!savedToken) console.log("Failed to save token into db")
 
-  console.log(`User ${foundUser.email} logged in`)
+  // save refreshToken in cookie (jwt)
+  const jwtcookie = res.cookie("jwt", refreshToken, cookieStandarOption)
+
   // return accessToken and role number
   return res.json({ accessToken, role: foundUser.role })
 }

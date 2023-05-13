@@ -2,8 +2,8 @@ import crypto from "crypto"
 import jwt from "jsonwebtoken"
 import { JWTPayload } from "../types/custom"
 
-const accessTokenExpiry: string = "30s"
-const refreshTokenExpiry: string = "60s"
+const accessTokenExpiry: string = "15m"
+const refreshTokenExpiry: string = "1h"
 
 export const random = () => crypto.randomBytes(16).toString("hex")
 

@@ -5,7 +5,6 @@ import { merge } from "lodash"
 
 const prisma = new PrismaClient()
 const defaultCreator: string = process.env.DEFAULT_CREATOR || "enviro-dv"
-let userRole: enumRole
 
 // FIELDS FILTER
 const activeRowCriteria = {
@@ -121,6 +120,17 @@ export const getUserAuthenticationByEmail = async (email: string) => {
   return user
 }
 
+export const saveRefreshToken = async (
+  refreshToken: string,
+  userId: string,
+) => {
+  const token = await prisma.tokens.create({
+    data: { refreshToken, userId },
+    select: { refreshToken: true, userId: true },
+  })
+  return token
+}
+
 export const getUserByRefreshToken = async (refreshToken: string) => {
   // find refreshToken in Tokens table
   const foundUser = await prisma.tokens.findUnique({
@@ -134,7 +144,7 @@ export const getUserByRefreshToken = async (refreshToken: string) => {
 
   const user = await prisma.users.findFirst({
     where: merge({ id: foundUser.userId }, activeRowCriteria),
-    select: identityFields,
+    select: merge(identityFields, privilegeFields),
   })
 
   return user
@@ -143,10 +153,18 @@ export const getUserByRefreshToken = async (refreshToken: string) => {
 // CAUTION!!!
 // dELETE = hard delete (delete record from table)
 // delete = soft delete (mark as inactive record using isActive field)
-export const dELETERefreshToken = async (userId: string) => {
+export const dELETEAllRefreshToken = async (userId: string) => {
   const tokensDeleted = await prisma.tokens.deleteMany({
     where: { userId: userId },
   })
 
   return tokensDeleted
+}
+
+export const dELETERefreshToken = async (token: string) => {
+  const tokenDeleted = await prisma.tokens.delete({
+    where: { refreshToken: token },
+  })
+
+  return tokenDeleted
 }
