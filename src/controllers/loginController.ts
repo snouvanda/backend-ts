@@ -6,7 +6,9 @@ import {
 } from "../helpers/authHelper"
 import dra, { setFault } from "../helpers/faultMsgHelper" //developer recommended action after error occured.
 import {
+  dELETERefreshToken,
   getUserAuthenticationByEmail,
+  getUserByRefreshToken,
   saveRefreshToken,
 } from "../repositories/usersRepo"
 import { encRole } from "../config/roles_list"
@@ -16,6 +18,31 @@ import { cookieStandarOption } from "../config/cookie_option"
 export const handleLogin = async (req: Request, res: Response) => {
   console.log("")
   console.log("User try to login")
+
+  // get cookies
+  const cookies = req.cookies
+
+  // if there is a refresh token
+  if (cookies.jwt) {
+    console.log("check existing refresh token")
+    const existingRefreshToken = cookies.jwt
+    console.log(existingRefreshToken)
+
+    // clear user cookie.jwt
+    res.clearCookie("jwt", cookieStandarOption)
+    console.log("cookie.jwt cleared")
+
+    // try to get userId from existing refresh token to delete it from db
+    const foundUser = await getUserByRefreshToken(existingRefreshToken)
+
+    if (foundUser) {
+      const deletedToken = await dELETERefreshToken(existingRefreshToken)
+      console.log("existing refresh token has been deleted")
+      console.log(deletedToken)
+    }
+  }
+
+  console.log("Continue login")
   const { email, password } = req.body
 
   // validate inputs available
