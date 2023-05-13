@@ -153,6 +153,8 @@ export const getUserByRefreshToken = async (refreshToken: string) => {
 // CAUTION!!!
 // dELETE = hard delete (delete record from table)
 // delete = soft delete (mark as inactive record using isActive field)
+
+// delete all refreshToken of specific userId
 export const dELETEAllRefreshToken = async (userId: string) => {
   const tokensDeleted = await prisma.tokens.deleteMany({
     where: { userId: userId },
@@ -161,6 +163,7 @@ export const dELETEAllRefreshToken = async (userId: string) => {
   return tokensDeleted
 }
 
+// delete a refreshToken
 export const dELETERefreshToken = async (token: string) => {
   const tokenDeleted = await prisma.tokens.delete({
     where: { refreshToken: token },

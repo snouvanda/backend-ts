@@ -15,7 +15,7 @@ export const authorizedTo = (...authorizedRoles: number[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     if (!req.jwtPayload) return res.sendStatus(401)
 
-    const { id, role } = req.jwtPayload
+    const { userId, role } = req.jwtPayload
 
     const rolesArray = [...authorizedRoles]
 

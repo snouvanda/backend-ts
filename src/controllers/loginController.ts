@@ -40,7 +40,7 @@ export const handleLogin = async (req: Request, res: Response) => {
 
   // create payload with id and encRole
   const payload = {
-    id: foundUser.id,
+    userId: foundUser.id,
     role: encRole(foundUser.role),
   }
 
