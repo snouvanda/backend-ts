@@ -1,30 +1,91 @@
 import { Request, Response } from "express"
-import {} from "../repositories/usersRepo"
+import {
+  getUserRegApprovalAllRoles,
+  getUserRegApprovalByRequestedRole,
+} from "../repositories/usersRepo"
+import { enumApproval as Approval, enumRole as Role } from "@prisma/client"
 
-export const getAllRegApprovalRequest = (req: Request, res: Response) => {
-  return res.sendStatus(201)
+export const getAllRegApprovalRequest = async (req: Request, res: Response) => {
+  const users = await getUserRegApprovalAllRoles(Approval.pending)
+  if (!users) return res.sendStatus(404)
+
+  return res.status(200).json({ users })
 }
 
-export const getAdminRegApprovalRequest = (req: Request, res: Response) => {
-  return res.sendStatus(201)
+export const getAdminRegApprovalRequest = async (
+  req: Request,
+  res: Response,
+) => {
+  const users = await getUserRegApprovalByRequestedRole(
+    Approval.pending,
+    Role.admin,
+  )
+  if (!users) return res.sendStatus(404)
+
+  return res.status(200).json({ users })
 }
 
-export const getEmployeeRegApprovalRequest = (req: Request, res: Response) => {
-  return res.sendStatus(201)
+export const getEmployeeRegApprovalRequest = async (
+  req: Request,
+  res: Response,
+) => {
+  const users = await getUserRegApprovalByRequestedRole(
+    Approval.pending,
+    Role.employee,
+  )
+  if (!users) return res.sendStatus(404)
+
+  return res.status(200).json({ users })
 }
 
-export const getCustomerRegApprovalRequest = (req: Request, res: Response) => {
-  return res.sendStatus(201)
+export const getCustomerRegApprovalRequest = async (
+  req: Request,
+  res: Response,
+) => {
+  const users = await getUserRegApprovalByRequestedRole(
+    Approval.pending,
+    Role.customer,
+  )
+  if (!users) return res.sendStatus(404)
+
+  return res.status(200).json({ users })
 }
 
-export const getShipperRegApprovalRequest = (req: Request, res: Response) => {
-  return res.sendStatus(201)
+export const getShipperRegApprovalRequest = async (
+  req: Request,
+  res: Response,
+) => {
+  const users = await getUserRegApprovalByRequestedRole(
+    Approval.pending,
+    Role.shipper,
+  )
+  if (!users) return res.sendStatus(404)
+
+  return res.status(200).json({ users })
 }
 
-export const getSupplierRegApprovalRequest = (req: Request, res: Response) => {
-  return res.sendStatus(201)
+export const getSupplierRegApprovalRequest = async (
+  req: Request,
+  res: Response,
+) => {
+  const users = await getUserRegApprovalByRequestedRole(
+    Approval.pending,
+    Role.supplier,
+  )
+  if (!users) return res.sendStatus(404)
+
+  return res.status(200).json({ users })
 }
 
-export const getGuestRegApprovalRequest = (req: Request, res: Response) => {
-  return res.sendStatus(201)
+export const getGuestRegApprovalRequest = async (
+  req: Request,
+  res: Response,
+) => {
+  const users = await getUserRegApprovalByRequestedRole(
+    Approval.pending,
+    Role.guest,
+  )
+  if (!users) return res.sendStatus(404)
+
+  return res.status(200).json({ users })
 }

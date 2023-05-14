@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express"
+import express from "express"
 import { isAuthenticated } from "../middlewares/aunthenticatorMW"
 import { authorizedTo } from "../middlewares/authorizerMW"
 import { getAllUsers } from "../controllers/usersController"

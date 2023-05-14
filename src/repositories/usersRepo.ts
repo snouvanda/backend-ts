@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from "@prisma/client"
+import { PrismaClient, Prisma, enumApproval } from "@prisma/client"
 import { enumRole } from "@prisma/client"
 
 import { merge } from "lodash"
@@ -170,4 +170,23 @@ export const dELETERefreshToken = async (token: string) => {
   })
 
   return tokenDeleted
+}
+
+export const getUserRegApprovalAllRoles = async (status: enumApproval) => {
+  const users = await prisma.users.findMany({
+    where: merge({ regApproval: status }, activeRowCriteria),
+    select: merge(identityFields, infoFields, privilegeFields, metaFields),
+  })
+  return users
+}
+
+export const getUserRegApprovalByRequestedRole = async (
+  status: enumApproval,
+  requestedRole: enumRole,
+) => {
+  const users = await prisma.users.findMany({
+    where: merge({ regApproval: status, requestedRole }, activeRowCriteria),
+    select: merge(identityFields, infoFields, privilegeFields, metaFields),
+  })
+  return users
 }
