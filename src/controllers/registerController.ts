@@ -44,7 +44,7 @@ export const registerUser = async (req: Request, res: Response) => {
 
     if (emailExists) {
       let fault = setFault("Email already registered.", dra.b2_signup_p)
-      return res.status(400).json(fault)
+      return res.status(409).json(fault)
     }
 
     //

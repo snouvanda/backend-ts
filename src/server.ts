@@ -4,6 +4,7 @@ import bodyParser from "body-parser"
 import cookieParser from "cookie-parser"
 import compression from "compression"
 import cors from "cors"
+import { corsOptions } from "./config/corsOptions"
 import dotenv from "dotenv"
 import router from "./router"
 
@@ -12,7 +13,7 @@ dotenv.config()
 const app = express()
 const PORT = process.env.APP_PORT || 5002
 
-app.use(cors({ credentials: true }))
+app.use(cors(corsOptions))
 
 // built-in middleware to handle urlencoded form data
 app.use(express.urlencoded({ extended: false }))
