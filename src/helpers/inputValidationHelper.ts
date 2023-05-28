@@ -1,5 +1,6 @@
 import { merge } from "lodash"
-import { enumRole } from "@prisma/client"
+// import { enumRole } from "@prisma/client"
+import { UserRole } from "../enums/dbEnums"
 import dra, { setFault } from "./faultMsgHelper" //developer recommended action after error occured.
 
 export const isEmailValid = (email: string) => {
@@ -17,7 +18,7 @@ export const isNameValid = (name: string) => {
 
 export const isRoleValid = async (role: string) => {
   // if (Object.values(enumRole).includes(role as enumRole)) {
-  if (role in enumRole) {
+  if (role in UserRole) {
     return true
   }
 

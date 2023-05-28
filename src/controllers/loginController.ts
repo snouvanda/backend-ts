@@ -11,7 +11,7 @@ import {
   getUserByRefreshToken,
   saveRefreshToken,
 } from "../repositories/usersRepo"
-import { encRole } from "../config/roles_list"
+import { shiftRole } from "../config/roles_list"
 import { cookieStandarOption } from "../config/cookie_option"
 
 // LOGIN
@@ -68,7 +68,7 @@ export const handleLogin = async (req: Request, res: Response) => {
   // create payload with id and encRole
   const payload = {
     userId: foundUser.id,
-    role: encRole(foundUser.role),
+    role: shiftRole(foundUser.role),
   }
 
   // create accessToken and refreshToken

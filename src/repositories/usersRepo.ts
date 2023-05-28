@@ -1,7 +1,8 @@
-import { PrismaClient, Prisma, enumApproval } from "@prisma/client"
-import { enumRole } from "@prisma/client"
-
+import { PrismaClient, Prisma } from "@prisma/client"
+import { UserRole, UserApproval } from "../enums/dbEnums"
 import { merge } from "lodash"
+import { TargetValue } from "../enums/generalEnums"
+import { USER_ROLES, USER_APPROVAL } from "./lookup_list"
 
 const prisma = new PrismaClient()
 const defaultCreator: string = process.env.DEFAULT_CREATOR || "enviro-dv"
@@ -47,6 +48,42 @@ const metaFields = {
   updatedBy: true,
 }
 
+// UTILITY FUNCTIONS
+
+const UserRoleToDB = (role: string): number => {
+  return USER_ROLES[role]
+}
+
+const UserRoleToApp = (role: number): string => {
+  let result = ""
+  Object.entries(USER_ROLES).find(([key, value]) => {
+    if (value === role) {
+      result = key
+      return true
+    }
+    return false
+  })
+  return result
+}
+
+const UserApprovalToDB = (approval: string): number => {
+  return USER_APPROVAL[approval]
+}
+
+const UserApprovalToApp = (approval: number): string => {
+  let result = ""
+  Object.entries(USER_APPROVAL).find(([key, value]) => {
+    if (value === approval) {
+      result = key
+      return true
+    }
+    return false
+  })
+  return result
+}
+
+// DB MANIPULATION FUNCTIONS
+
 export const createNewUser = async (values: Record<string, any>) => {
   const {
     email,
@@ -76,7 +113,7 @@ export const createNewUser = async (values: Record<string, any>) => {
       requestedRole: requestedRole,
       role: role,
       isActive: isActive,
-      regApproval: "pending",
+      regApproval: UserApproval.Pending,
       salt: salt,
       password: password,
       createdBy: creator,
@@ -116,8 +153,31 @@ export const getUserAuthenticationByEmail = async (email: string) => {
     where: merge({ email: email }, activeRowCriteria),
     select: merge(identityFields, privilegeFields, credentialFields),
   })
-
-  return user
+  let user_app = {
+    id: "",
+    email: "",
+    requestedRole: "",
+    role: "",
+    isActive: false,
+    regApproval: "",
+    salt: "",
+    password: "",
+  }
+  if (user) {
+    if (user.salt) {
+      user_app = {
+        id: user.id,
+        email: user.email,
+        requestedRole: UserRoleToApp(user.requestedRole),
+        role: UserRoleToApp(user.role),
+        isActive: user.isActive,
+        regApproval: UserRoleToApp(user.regApproval),
+        salt: user.salt,
+        password: user.password,
+      }
+    }
+  }
+  return user_app
 }
 
 export const saveRefreshToken = async (
@@ -147,7 +207,27 @@ export const getUserByRefreshToken = async (refreshToken: string) => {
     select: merge(identityFields, privilegeFields),
   })
 
-  return user
+  // convert role, requestedRole and regApproval (number) into
+  // meaning full string value
+  let user_app = {
+    id: "",
+    email: "",
+    requestedRole: "",
+    role: "",
+    isActive: false,
+    regApproval: "",
+  }
+  if (user) {
+    user_app = {
+      id: user.id,
+      email: user.email,
+      requestedRole: UserRoleToApp(user.requestedRole),
+      role: UserRoleToApp(user.role),
+      isActive: user.isActive,
+      regApproval: UserApprovalToApp(user.regApproval),
+    }
+  }
+  return user_app
 }
 
 // CAUTION!!!
@@ -172,7 +252,7 @@ export const dELETERefreshToken = async (token: string) => {
   return tokenDeleted
 }
 
-export const getUserRegApprovalAllRoles = async (status: enumApproval) => {
+export const getUserRegApprovalAllRoles = async (status: UserApproval) => {
   const users = await prisma.users.findMany({
     where: merge({ regApproval: status }, activeRowCriteria),
     select: merge(identityFields, infoFields, privilegeFields, metaFields),
@@ -181,8 +261,8 @@ export const getUserRegApprovalAllRoles = async (status: enumApproval) => {
 }
 
 export const getUserRegApprovalByRequestedRole = async (
-  status: enumApproval,
-  requestedRole: enumRole,
+  status: UserApproval,
+  requestedRole: UserRole,
 ) => {
   const users = await prisma.users.findMany({
     where: merge({ regApproval: status, requestedRole }, activeRowCriteria),

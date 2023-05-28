@@ -1,26 +1,27 @@
 import { findKey } from "lodash"
 import { RoleList } from "../types/custom"
+import { TargetValue } from "../enums/generalEnums"
 
 // this value will be use in jwt payload to disguise user role
 // keys based on enumRole in db schema
-
-export const ROLES: RoleList = {
-  admin: 6515,
-  customer: 2594,
-  employee: 5445,
-  guest: 7952,
-  shipper: 3125,
-  supplier: 5254,
+export const SHIFTED_ROLES: RoleList = {
+  Admin: 6515,
+  Employee: 5445,
+  Dispatcher: 4578,
+  Customer: 2594,
+  Guest: 7952,
+  Shipper: 3125,
+  Supplier: 8254,
 }
 
-export const encRole = (role: string): number => {
-  return ROLES[role]
+export const shiftRole = (role: string): number => {
+  return SHIFTED_ROLES[role]
 }
 
-export const decRole = (encValue: number): string => {
+export const unshiftRole = (shiftedRole: number): string => {
   let result = ""
-  Object.entries(ROLES).find(([key, value]) => {
-    if (value === encValue) {
+  Object.entries(SHIFTED_ROLES).find(([key, value]) => {
+    if (value === shiftedRole) {
       result = key
       return true
     }

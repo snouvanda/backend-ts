@@ -7,3 +7,7 @@ export type JWTPayload = {
 export type RoleList = {
   [key: string]: number
 }
+
+export type LookupList = {
+  [key: string]: number
+}
