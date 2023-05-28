@@ -110,8 +110,8 @@ export const createNewUser = async (values: Record<string, any>) => {
       email: email,
       name: name,
       phone: phone,
-      requestedRole: requestedRole,
-      role: role,
+      requestedRole: UserRoleToDB(requestedRole),
+      role: UserRoleToDB(role),
       isActive: isActive,
       regApproval: UserApproval.Pending,
       salt: salt,
@@ -129,7 +129,17 @@ export const createNewUser = async (values: Record<string, any>) => {
       regApproval: true,
     },
   })
-  return user
+  let user_app = {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    phone: user.phone,
+    requestedRole: UserRoleToApp(user.requestedRole),
+    role: UserRoleToApp(user.role),
+    isActive: user.isActive,
+    regApproval: UserApprovalToApp(user.regApproval),
+  }
+  return user_app
 }
 
 export const getUsers = async () => {
