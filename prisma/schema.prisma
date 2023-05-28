@@ -19,54 +19,56 @@ datasource db {
 // AUTH TABLES
 
 model Users {
-  id                  String                     @id @default(uuid())
-  email               String                     @unique
-  name                String
-  phone               String?
-  requestedRole       Int                        @default(4) // ref: enum UserRole
-  role                Int                        @default(4) // ref: enum UserRole
-  isActive            Boolean                    @default(false)
-  regApproval         Int                        @default(0) // ref: enum UserApproval
-  salt                String?
-  password            String
-  remarks             String?
-  createdAt           DateTime                   @default(now())
-  createdBy           String
-  updatedAt           DateTime?                  @updatedAt
-  updatedBy           String?
-  deleted             DateTime?
-  deletedBy           String?
-  Procurement1        Procurements[]             @relation("createdByUserId")
-  Procurement2        Procurements[]             @relation("updatedByUserId")
-  Procurement3        Procurements[]             @relation("deletedByUserId")
-  Sales1              SalesOrders[]              @relation("createdByUserId")
-  Sales2              SalesOrders[]              @relation("updatedByUserId")
-  Sales3              SalesOrders[]              @relation("deletedByUserId")
-  Customer            Customers[]                @relation("userId")
-  Customer1           Customers[]                @relation("createdByUserId")
-  Customer2           Customers[]                @relation("updatedByUserId")
-  Customer3           Customers[]                @relation("deletedByUserId")
-  Supplier            Suppliers[]                @relation("userId")
-  Supplier1           Suppliers[]                @relation("createdByUserId")
-  Supplier2           Suppliers[]                @relation("updatedByUserId")
-  Supplier3           Suppliers[]                @relation("deletedByUserId")
-  Product1            Products[]                 @relation("createdByUserId")
-  Product2            Products[]                 @relation("updatedByUserId")
-  Product3            Products[]                 @relation("deletedByUserId")
-  Shipper             Shippers[]                 @relation("userId")
-  Shipper1            Shippers[]                 @relation("createdByUserId")
-  Shipper2            Shippers[]                 @relation("updatedByUserId")
-  Shipper3            Shippers[]                 @relation("deletedByUserId")
-  Token               Tokens[]                   @relation("userId")
-  ProcReturn1         ProcurementReturns[]       @relation("createdByUserId")
-  ProcReturn2         ProcurementReturns[]       @relation("updatedByUserId")
-  ProcReturn3         ProcurementReturns[]       @relation("deletedByUserId")
-  SalesReturn1        SalesReturns[]             @relation("createdByUserId")
-  SalesReturn2        SalesReturns[]             @relation("updatedByUserId")
-  SalesReturn3        SalesReturns[]             @relation("deletedByUserId")
-  Shipment1           Shipments[]                @relation("createdByUserId")
-  Shipment2           Shipments[]                @relation("updatedByUserId")
-  Shipment3           Shipments[]                @relation("deletedByUserId")
+  id            String    @id @default(uuid()) @db.VarChar(50)
+  email         String    @unique @db.VarChar(100)
+  name          String    @db.VarChar(50)
+  phone         String?   @db.VarChar(50)
+  requestedRole Int       @default(4) // ref: enum UserRole
+  role          Int       @default(4) // ref: enum UserRole
+  isActive      Boolean   @default(false)
+  regApproval   Int       @default(0) // ref: enum UserApproval
+  salt          String?   @db.VarChar(100)
+  password      String    @db.VarChar(100)
+  remarks       String?   @db.VarChar(100)
+  createdAt     DateTime  @default(now())
+  createdBy     String    @db.VarChar(50)
+  updatedAt     DateTime? @updatedAt
+  updatedBy     String?   @db.VarChar(50)
+  deleted       DateTime?
+  deletedBy     String?   @db.VarChar(50)
+
+  Procurement1 Procurements[]       @relation("createdByUserId")
+  Procurement2 Procurements[]       @relation("updatedByUserId")
+  Procurement3 Procurements[]       @relation("deletedByUserId")
+  Sales1       SalesOrders[]        @relation("createdByUserId")
+  Sales2       SalesOrders[]        @relation("updatedByUserId")
+  Sales3       SalesOrders[]        @relation("deletedByUserId")
+  Customer     Customers[]          @relation("userId")
+  Customer1    Customers[]          @relation("createdByUserId")
+  Customer2    Customers[]          @relation("updatedByUserId")
+  Customer3    Customers[]          @relation("deletedByUserId")
+  Supplier     Suppliers[]          @relation("userId")
+  Supplier1    Suppliers[]          @relation("createdByUserId")
+  Supplier2    Suppliers[]          @relation("updatedByUserId")
+  Supplier3    Suppliers[]          @relation("deletedByUserId")
+  Product1     Products[]           @relation("createdByUserId")
+  Product2     Products[]           @relation("updatedByUserId")
+  Product3     Products[]           @relation("deletedByUserId")
+  Shipper      Shippers[]           @relation("userId")
+  Shipper1     Shippers[]           @relation("createdByUserId")
+  Shipper2     Shippers[]           @relation("updatedByUserId")
+  Shipper3     Shippers[]           @relation("deletedByUserId")
+  Token        Tokens[]             @relation("userId")
+  ProcReturn1  ProcurementReturns[] @relation("createdByUserId")
+  ProcReturn2  ProcurementReturns[] @relation("updatedByUserId")
+  ProcReturn3  ProcurementReturns[] @relation("deletedByUserId")
+  SalesReturn1 SalesReturns[]       @relation("createdByUserId")
+  SalesReturn2 SalesReturns[]       @relation("updatedByUserId")
+  SalesReturn3 SalesReturns[]       @relation("deletedByUserId")
+  Shipment1    Shipments[]          @relation("createdByUserId")
+  Shipment2    Shipments[]          @relation("updatedByUserId")
+  Shipment3    Shipments[]          @relation("deletedByUserId")
+
   StockAdjustment1    StockAdjustments[]         @relation("createdByUserId")
   StockAdjustment2    StockAdjustments[]         @relation("updatedByUserId")
   StockAdjustment3    StockAdjustments[]         @relation("deletedByUserId")
@@ -81,11 +83,12 @@ model Users {
 }
 
 model Tokens {
-  id           String   @id @default(uuid())
+  id           String   @id @default(uuid()) @db.VarChar(50)
   refreshToken String   @unique @db.VarChar(360)
-  userId       String
+  userId       String   @db.VarChar(50)
   createdAt    DateTime @default(now())
-  User         Users    @relation("userId", fields: [userId], references: [id])
+
+  User Users @relation("userId", fields: [userId], references: [id])
 
   @@index([refreshToken])
 }
@@ -94,18 +97,19 @@ model Tokens {
 
 model Products {
   id        Int       @id @default(autoincrement())
-  alias     String
-  name      String
-  remarks   String?
+  alias     String    @db.VarChar(10)
+  name      String    @db.VarChar(50)
+  remarks   String?   @db.VarChar(100)
   createdAt DateTime  @default(now())
-  createdBy String
+  createdBy String    @db.VarChar(50)
   updatedAt DateTime? @updatedAt
-  updatedBy String?
+  updatedBy String?   @db.VarChar(50)
   deleted   DateTime?
-  deletedBy String?
-  User1     Users     @relation("createdByUserId", fields: [createdBy], references: [id])
-  User2     Users?    @relation("updatedByUserId", fields: [updatedBy], references: [id])
-  User3     Users?    @relation("deletedByUserId", fields: [deletedBy], references: [id])
+  deletedBy String?   @db.VarChar(50)
+
+  User1 Users  @relation("createdByUserId", fields: [createdBy], references: [id])
+  User2 Users? @relation("updatedByUserId", fields: [updatedBy], references: [id])
+  User3 Users? @relation("deletedByUserId", fields: [deletedBy], references: [id])
 
   Procurement        Procurements[]
   ProcReturn         ProcurementReturns[]
@@ -118,76 +122,85 @@ model Products {
 }
 
 model Customers {
-  id          String         @unique @db.VarChar(8) // example: CUS001
-  userId      String?
-  nameAlias   String
-  fullname    String?
+  id          String    @unique @db.VarChar(10) // example: CUS001
+  userId      String?   @db.VarChar(50)
+  nameAlias   String    @db.VarChar(20)
+  fullname    String?   @db.VarChar(50)
   cusType     Int // ref: enum CustomerType
-  companyName String?
-  phone       String?
-  nik         String?
-  unloadPoint String?
-  remarks     String?
-  createdAt   DateTime       @default(now())
-  createdBy   String
-  updatedAt   DateTime?      @updatedAt
-  updatedBy   String?
+  companyName String?   @db.VarChar(50)
+  email       String?   @db.VarChar(100)
+  phone       String?   @db.VarChar(50)
+  nik         String?   @db.VarChar(15)
+  unloadPoint String?   @db.VarChar(50)
+  remarks     String?   @db.VarChar(100)
+  createdAt   DateTime  @default(now())
+  createdBy   String    @db.VarChar(50)
+  updatedAt   DateTime? @updatedAt
+  updatedBy   String?   @db.VarChar(50)
   deleted     DateTime?
-  deletedBy   String?
-  User        Users?         @relation("userId", fields: [userId], references: [id])
-  User1       Users          @relation("createdByUserId", fields: [createdBy], references: [id])
-  User2       Users?         @relation("updatedByUserId", fields: [updatedBy], references: [id])
-  User3       Users?         @relation("deletedByUserId", fields: [deletedBy], references: [id])
+  deletedBy   String?   @db.VarChar(50)
+
+  User  Users? @relation("userId", fields: [userId], references: [id])
+  User1 Users  @relation("createdByUserId", fields: [createdBy], references: [id])
+  User2 Users? @relation("updatedByUserId", fields: [updatedBy], references: [id])
+  User3 Users? @relation("deletedByUserId", fields: [deletedBy], references: [id])
+
   SalesOrder  SalesOrders[]
   SalesReturn SalesReturns[]
 }
 
 model Suppliers {
-  id           String               @unique @db.VarChar(8) // example: SUP001
-  userId       String?
-  companyName  String
-  contactName  String?
-  contactPhone String?
-  contactEmail String?
-  remarks      String?
-  createdAt    DateTime             @default(now())
-  createdBy    String
-  updatedAt    DateTime?            @updatedAt
-  updatedBy    String?
+  id           String    @unique @db.VarChar(10) // example: SUP001
+  userId       String?   @db.VarChar(50)
+  companyName  String    @db.VarChar(50)
+  contactName  String?   @db.VarChar(50)
+  contactPhone String?   @db.VarChar(50)
+  contactEmail String?   @db.VarChar(100)
+  remarks      String?   @db.VarChar(100)
+  createdAt    DateTime  @default(now())
+  createdBy    String    @db.VarChar(50)
+  updatedAt    DateTime? @updatedAt
+  updatedBy    String?   @db.VarChar(50)
   deleted      DateTime?
-  deletedBy    String?
-  User         Users?               @relation("userId", fields: [userId], references: [id])
-  User1        Users                @relation("createdByUserId", fields: [createdBy], references: [id])
-  User2        Users?               @relation("updatedByUserId", fields: [updatedBy], references: [id])
-  User3        Users?               @relation("deletedByUserId", fields: [deletedBy], references: [id])
-  Procurement  Procurements[]
-  ProcReturn   ProcurementReturns[]
+  deletedBy    String?   @db.VarChar(50)
+
+  User  Users? @relation("userId", fields: [userId], references: [id])
+  User1 Users  @relation("createdByUserId", fields: [createdBy], references: [id])
+  User2 Users? @relation("updatedByUserId", fields: [updatedBy], references: [id])
+  User3 Users? @relation("deletedByUserId", fields: [deletedBy], references: [id])
+
+  Procurement Procurements[]
+  ProcReturn  ProcurementReturns[]
 }
 
 model Shippers {
-  id           String      @unique @db.VarChar(8) // example: SHP001
-  userId       String?
-  companyName  String
-  contactName  String?
-  contactPhone String?
-  remarks      String?
-  createdAt    DateTime    @default(now())
-  createdBy    String
-  updatedAt    DateTime?   @updatedAt
-  updatedBy    String?
+  id           String    @unique @db.VarChar(10) // example: SHP001
+  userId       String?   @db.VarChar(50)
+  companyName  String    @db.VarChar(50)
+  contactName  String?   @db.VarChar(50)
+  contactPhone String?   @db.VarChar(50)
+  contactEmail String?   @db.VarChar(100)
+  remarks      String?   @db.VarChar(100)
+  createdAt    DateTime  @default(now())
+  createdBy    String    @db.VarChar(50)
+  updatedAt    DateTime? @updatedAt
+  updatedBy    String?   @db.VarChar(50)
   deleted      DateTime?
-  deletedBy    String?
-  User         Users?      @relation("userId", fields: [userId], references: [id])
-  User1        Users       @relation("createdByUserId", fields: [createdBy], references: [id])
-  User2        Users?      @relation("updatedByUserId", fields: [updatedBy], references: [id])
-  User3        Users?      @relation("deletedByUserId", fields: [deletedBy], references: [id])
-  Shipment     Shipments[]
+  deletedBy    String?   @db.VarChar(50)
+
+  User  Users? @relation("userId", fields: [userId], references: [id])
+  User1 Users  @relation("createdByUserId", fields: [createdBy], references: [id])
+  User2 Users? @relation("updatedByUserId", fields: [updatedBy], references: [id])
+  User3 Users? @relation("deletedByUserId", fields: [deletedBy], references: [id])
+
+  Shipment Shipments[]
 }
 
 model StockAccounts {
-  id                 Int                        @id @default(autoincrement())
-  account            String                     @unique
-  remarks            String?
+  id      Int     @id @default(autoincrement())
+  account String  @unique @db.VarChar(20)
+  remarks String? @db.VarChar(100)
+
   Procurement        Procurements[]
   ProcReturn         ProcurementReturns[]
   SalesOrder         SalesOrders[]
@@ -201,125 +214,134 @@ model StockAccounts {
 // OPERATIONS TABLES
 
 model Procurements {
-  id            Int                  @id @default(autoincrement())
-  trxDate       DateTime             @default(now()) @db.Date
-  sqc           Int                  @default(1)
-  supplierId    String
-  transaction   Int                  @default(1) // ref: enum ProcurementTrx
+  id            Int       @id @default(autoincrement())
+  trxDate       DateTime  @default(now()) @db.Date
+  sqc           Int       @default(1)
+  supplierId    String    @db.VarChar(10)
+  transaction   Int       @default(1) // ref: enum ProcurementTrx
   productId     Int // ref: table Products.id
   quantity      Int
   unitPrice     Decimal
   account       Int // ref: table StockAccounts.id
-  logicalStock  Int                  @default(0)
-  physicalStock Int                  @default(0)
-  loadStatus    Int                  @default(0) // ref: enum ShipmentLoadStatus
+  logicalStock  Int       @default(0)
+  physicalStock Int       @default(0)
+  loadStatus    Int       @default(0) // ref: enum ShipmentLoadStatus
   paymentStatus Int // ref: enum PaymentStatus
   paidAmount    Decimal
   paidMethod    Int // ref: enum PaymentMethod
   paidAmtBank   Decimal
   paidAmtCash   Decimal
   paidAmtAccRcv Decimal
-  references    String
-  remarks       String?
-  createdAt     DateTime             @default(now())
-  createdBy     String
-  updatedAt     DateTime?            @updatedAt
-  updatedBy     String?
+  references    String?   @db.VarChar(50)
+  remarks       String?   @db.VarChar(100)
+  createdAt     DateTime  @default(now())
+  createdBy     String    @db.VarChar(50)
+  updatedAt     DateTime? @updatedAt
+  updatedBy     String?   @db.VarChar(50)
   deleted       DateTime?
-  deletedBy     String?
-  User1         Users                @relation("createdByUserId", fields: [createdBy], references: [id])
-  User2         Users?               @relation("updatedByUserId", fields: [updatedBy], references: [id])
-  User3         Users?               @relation("deletedByUserId", fields: [deletedBy], references: [id])
-  Supplier      Suppliers            @relation(fields: [supplierId], references: [id])
-  Product       Products             @relation(fields: [productId], references: [id])
-  StockAccount  StockAccounts        @relation(fields: [account], references: [id])
-  ProcReturn    ProcurementReturns[]
-  Shipments     Shipments[]
+  deletedBy     String?   @db.VarChar(50)
+
+  User1 Users  @relation("createdByUserId", fields: [createdBy], references: [id])
+  User2 Users? @relation("updatedByUserId", fields: [updatedBy], references: [id])
+  User3 Users? @relation("deletedByUserId", fields: [deletedBy], references: [id])
+
+  Supplier     Suppliers     @relation(fields: [supplierId], references: [id])
+  Product      Products      @relation(fields: [productId], references: [id])
+  StockAccount StockAccounts @relation(fields: [account], references: [id])
+
+  ProcReturn ProcurementReturns[]
+  Shipments  Shipments[]
 }
 
 model ProcurementReturns {
-  id            Int           @id @default(autoincrement())
-  trxDate       DateTime      @default(now()) @db.Date
-  sqc           Int           @default(1)
+  id            Int       @id @default(autoincrement())
+  trxDate       DateTime  @default(now()) @db.Date
+  sqc           Int       @default(1)
   procurementId Int
-  supplierId    String
+  supplierId    String    @db.VarChar(10)
   productId     Int // ref: table Products.id
   quantity      Int
   unitPrice     Decimal
   account       Int // ref: table StockAccounts.id
-  references    String
-  remarks       String?
-  createdAt     DateTime      @default(now())
-  createdBy     String
-  updatedAt     DateTime?     @updatedAt
-  updatedBy     String?
+  references    String?   @db.VarChar(50)
+  remarks       String?   @db.VarChar(100)
+  createdAt     DateTime  @default(now())
+  createdBy     String    @db.VarChar(50)
+  updatedAt     DateTime? @updatedAt
+  updatedBy     String?   @db.VarChar(50)
   deleted       DateTime?
-  deletedBy     String?
-  User1         Users         @relation("createdByUserId", fields: [createdBy], references: [id])
-  User2         Users?        @relation("updatedByUserId", fields: [updatedBy], references: [id])
-  User3         Users?        @relation("deletedByUserId", fields: [deletedBy], references: [id])
-  Supplier      Suppliers     @relation(fields: [supplierId], references: [id])
-  Product       Products      @relation(fields: [productId], references: [id])
-  StockAccount  StockAccounts @relation(fields: [account], references: [id])
-  Procurement   Procurements  @relation(fields: [procurementId], references: [id])
+  deletedBy     String?   @db.VarChar(50)
+
+  User1 Users  @relation("createdByUserId", fields: [createdBy], references: [id])
+  User2 Users? @relation("updatedByUserId", fields: [updatedBy], references: [id])
+  User3 Users? @relation("deletedByUserId", fields: [deletedBy], references: [id])
+
+  Supplier     Suppliers     @relation(fields: [supplierId], references: [id])
+  Product      Products      @relation(fields: [productId], references: [id])
+  StockAccount StockAccounts @relation(fields: [account], references: [id])
+  Procurement  Procurements  @relation(fields: [procurementId], references: [id])
 }
 
 model SalesOrders {
-  id            Int            @id @default(autoincrement())
-  trxDate       DateTime       @default(now()) @db.Date
-  sqc           Int            @default(1)
-  customerId    String
+  id            Int       @id @default(autoincrement())
+  trxDate       DateTime  @default(now()) @db.Date
+  sqc           Int       @default(1)
+  customerId    String    @db.VarChar(10)
   account       Int // ref: table StockAccounts.id
   productId     Int // ref: table Products.id
   quantity      Int
   unitPrice     Decimal
-  loadStatus    Int            @default(0) // ref: enum ShipmentLoadStatus
+  loadStatus    Int       @default(0) // ref: enum ShipmentLoadStatus
   paymentStatus Int // ref: enum PaymentStatus
-  dueDate       DateTime?      @db.Date
+  dueDate       DateTime? @db.Date
   paidAmount    Decimal
   paidMethod    Int // ref: enum PaymentMethod
   paidAmtBank   Decimal
   paidAmtCash   Decimal
   paidAmtAccRcv Decimal
-  references    String
-  remarks       String?
-  createdAt     DateTime       @default(now())
-  createdBy     String
-  updatedAt     DateTime?      @updatedAt
-  updatedBy     String?
+  references    String?   @db.VarChar(50)
+  remarks       String?   @db.VarChar(100)
+  createdAt     DateTime  @default(now())
+  createdBy     String    @db.VarChar(50)
+  updatedAt     DateTime? @updatedAt
+  updatedBy     String?   @db.VarChar(50)
   deleted       DateTime?
-  deletedBy     String?
-  User1         Users          @relation("createdByUserId", fields: [createdBy], references: [id])
-  User2         Users?         @relation("updatedByUserId", fields: [updatedBy], references: [id])
-  User3         Users?         @relation("deletedByUserId", fields: [deletedBy], references: [id])
-  Customer      Customers      @relation(fields: [customerId], references: [id])
-  Product       Products       @relation(fields: [productId], references: [id])
-  StockAccount  StockAccounts  @relation(fields: [account], references: [id])
-  SalesReturn   SalesReturns[]
-  Shipments     Shipments[]
+  deletedBy     String?   @db.VarChar(50)
+
+  User1 Users  @relation("createdByUserId", fields: [createdBy], references: [id])
+  User2 Users? @relation("updatedByUserId", fields: [updatedBy], references: [id])
+  User3 Users? @relation("deletedByUserId", fields: [deletedBy], references: [id])
+
+  Customer     Customers      @relation(fields: [customerId], references: [id])
+  Product      Products       @relation(fields: [productId], references: [id])
+  StockAccount StockAccounts  @relation(fields: [account], references: [id])
+  SalesReturn  SalesReturns[]
+  Shipments    Shipments[]
 }
 
 model SalesReturns {
-  id           Int           @id @default(autoincrement())
-  trxDate      DateTime      @default(now()) @db.Date
-  sqc          Int           @default(1)
+  id           Int       @id @default(autoincrement())
+  trxDate      DateTime  @default(now()) @db.Date
+  sqc          Int       @default(1)
   salesOrderId Int
-  customerId   String
+  customerId   String    @db.VarChar(10)
   account      Int // ref: table StockAccounts.id
   productId    Int // ref: table Products.id
   quantity     Int
   unitPrice    Decimal
-  references   String
-  remarks      String?
-  createdAt    DateTime      @default(now())
-  createdBy    String
-  updatedAt    DateTime?     @updatedAt
-  updatedBy    String?
+  references   String?   @db.VarChar(50)
+  remarks      String?   @db.VarChar(100)
+  createdAt    DateTime  @default(now())
+  createdBy    String    @db.VarChar(50)
+  updatedAt    DateTime? @updatedAt
+  updatedBy    String?   @db.VarChar(50)
   deleted      DateTime?
-  deletedBy    String?
-  User1        Users         @relation("createdByUserId", fields: [createdBy], references: [id])
-  User2        Users?        @relation("updatedByUserId", fields: [updatedBy], references: [id])
-  User3        Users?        @relation("deletedByUserId", fields: [deletedBy], references: [id])
+  deletedBy    String?   @db.VarChar(50)
+
+  User1 Users  @relation("createdByUserId", fields: [createdBy], references: [id])
+  User2 Users? @relation("updatedByUserId", fields: [updatedBy], references: [id])
+  User3 Users? @relation("deletedByUserId", fields: [deletedBy], references: [id])
+
   Customer     Customers     @relation(fields: [customerId], references: [id])
   Product      Products      @relation(fields: [productId], references: [id])
   StockAccount StockAccounts @relation(fields: [account], references: [id])
@@ -327,63 +349,68 @@ model SalesReturns {
 }
 
 model Shipments {
-  id            Int           @id @default(autoincrement())
-  trxDate       DateTime      @default(now()) @db.Date
-  sqc           Int           @default(1)
-  shipperId     String
-  reg_plate     String
+  id            Int       @id @default(autoincrement())
+  trxDate       DateTime  @default(now()) @db.Date
+  sqc           Int       @default(1)
+  shipperId     String    @db.VarChar(10)
+  reg_plate     String    @db.VarChar(15)
   account       Int // ref: table StockAccounts.id
   procurementId Int
   salesOrderId  Int
   productId     Int // ref: table Products.id
   quantity      Int
   billTo        Int // ref: enum ShippingBillTo
-  remarks       String?
-  createdAt     DateTime      @default(now())
-  createdBy     String
-  updatedAt     DateTime?     @updatedAt
-  updatedBy     String?
+  references    String?   @db.VarChar(50)
+  remarks       String?   @db.VarChar(100)
+  createdAt     DateTime  @default(now())
+  createdBy     String    @db.VarChar(50)
+  updatedAt     DateTime? @updatedAt
+  updatedBy     String?   @db.VarChar(50)
   deleted       DateTime?
-  deletedBy     String?
-  User1         Users         @relation("createdByUserId", fields: [createdBy], references: [id])
-  User2         Users?        @relation("updatedByUserId", fields: [updatedBy], references: [id])
-  User3         Users?        @relation("deletedByUserId", fields: [deletedBy], references: [id])
-  Shipper       Shippers      @relation(fields: [shipperId], references: [id])
-  StockAccount  StockAccounts @relation(fields: [account], references: [id])
-  Procurement   Procurements  @relation(fields: [procurementId], references: [id])
-  SalesOrder    SalesOrders   @relation(fields: [salesOrderId], references: [id])
-  Product       Products      @relation(fields: [productId], references: [id])
+  deletedBy     String?   @db.VarChar(50)
+
+  User1 Users  @relation("createdByUserId", fields: [createdBy], references: [id])
+  User2 Users? @relation("updatedByUserId", fields: [updatedBy], references: [id])
+  User3 Users? @relation("deletedByUserId", fields: [deletedBy], references: [id])
+
+  Shipper      Shippers      @relation(fields: [shipperId], references: [id])
+  StockAccount StockAccounts @relation(fields: [account], references: [id])
+  Procurement  Procurements  @relation(fields: [procurementId], references: [id])
+  SalesOrder   SalesOrders   @relation(fields: [salesOrderId], references: [id])
+  Product      Products      @relation(fields: [productId], references: [id])
 }
 
 model StockAdjustments {
-  id           Int           @id @default(autoincrement())
-  trxDate      DateTime      @default(now()) @db.Date
-  sqc          Int           @default(1)
-  transaction  Int           @default(1) // ref: enum StockAdjustmentTrx
-  account      Int // ref: table StockAccounts.id
-  productId    Int // ref: table Products.id
-  quantity     Int
-  unitPrice    Decimal
-  references   String
-  remarks      String?
-  createdAt    DateTime      @default(now())
-  createdBy    String
-  updatedAt    DateTime?     @updatedAt
-  updatedBy    String?
-  deleted      DateTime?
-  deletedBy    String?
-  User1        Users         @relation("createdByUserId", fields: [createdBy], references: [id])
-  User2        Users?        @relation("updatedByUserId", fields: [updatedBy], references: [id])
-  User3        Users?        @relation("deletedByUserId", fields: [deletedBy], references: [id])
+  id          Int       @id @default(autoincrement())
+  trxDate     DateTime  @default(now()) @db.Date
+  sqc         Int       @default(1)
+  transaction Int       @default(1) // ref: enum StockAdjustmentTrx
+  account     Int // ref: table StockAccounts.id
+  productId   Int // ref: table Products.id
+  quantity    Int
+  unitPrice   Decimal
+  references  String?   @db.VarChar(50)
+  remarks     String?   @db.VarChar(100)
+  createdAt   DateTime  @default(now())
+  createdBy   String    @db.VarChar(50)
+  updatedAt   DateTime? @updatedAt
+  updatedBy   String?   @db.VarChar(50)
+  deleted     DateTime?
+  deletedBy   String?   @db.VarChar(50)
+
+  User1 Users  @relation("createdByUserId", fields: [createdBy], references: [id])
+  User2 Users? @relation("updatedByUserId", fields: [updatedBy], references: [id])
+  User3 Users? @relation("deletedByUserId", fields: [deletedBy], references: [id])
+
   Product      Products      @relation(fields: [productId], references: [id])
   StockAccount StockAccounts @relation(fields: [account], references: [id])
 }
 
 model InventoryJournalLogical {
-  id           Int           @id @default(autoincrement())
-  trxDate      DateTime      @default(now()) @db.Date
-  sqc          Int           @default(1)
-  transaction  Int           @default(1) // ref: enum StockAdjustmentTrx
+  id           Int       @id @default(autoincrement())
+  trxDate      DateTime  @default(now()) @db.Date
+  sqc          Int       @default(1)
+  transaction  Int       @default(1) // ref: enum StockAdjustmentTrx
   account      Int // ref: table StockAccounts.id
   productId    Int // ref: table Products.id
   quantity     Int
@@ -392,26 +419,29 @@ model InventoryJournalLogical {
   receivedFKId Int
   issuedTo     Int // ref: enum InventoryLogicalIssuedTo
   issuedFKId   Int
-  references   String
-  remarks      String?
-  createdAt    DateTime      @default(now())
-  createdBy    String
-  updatedAt    DateTime?     @updatedAt
-  updatedBy    String?
+  references   String?   @db.VarChar(50)
+  remarks      String?   @db.VarChar(100)
+  createdAt    DateTime  @default(now())
+  createdBy    String    @db.VarChar(50)
+  updatedAt    DateTime? @updatedAt
+  updatedBy    String?   @db.VarChar(50)
   deleted      DateTime?
-  deletedBy    String?
-  User1        Users         @relation("createdByUserId", fields: [createdBy], references: [id])
-  User2        Users?        @relation("updatedByUserId", fields: [updatedBy], references: [id])
-  User3        Users?        @relation("deletedByUserId", fields: [deletedBy], references: [id])
-  Product      Products      @relation(fields: [productId], references: [id])
+  deletedBy    String?   @db.VarChar(50)
+
+  User1 Users  @relation("createdByUserId", fields: [createdBy], references: [id])
+  User2 Users? @relation("updatedByUserId", fields: [updatedBy], references: [id])
+  User3 Users? @relation("deletedByUserId", fields: [deletedBy], references: [id])
+
+  Product Products @relation(fields: [productId], references: [id])
+
   StockAccount StockAccounts @relation(fields: [account], references: [id])
 }
 
 model InventoryJournalPhysical {
-  id           Int           @id @default(autoincrement())
-  trxDate      DateTime      @default(now()) @db.Date
-  sqc          Int           @default(1)
-  transaction  Int           @default(1) // ref: enum StockAdjustmentTrx
+  id           Int       @id @default(autoincrement())
+  trxDate      DateTime  @default(now()) @db.Date
+  sqc          Int       @default(1)
+  transaction  Int       @default(1) // ref: enum StockAdjustmentTrx
   account      Int // ref: table StockAccounts.id
   productId    Int // ref: table Products.id
   quantity     Int
@@ -420,18 +450,21 @@ model InventoryJournalPhysical {
   receivedFKId Int
   issuedTo     Int // ref: enum InventoryPhysicalIssuedTo
   issuedFKId   Int
-  references   String
-  remarks      String?
-  createdAt    DateTime      @default(now())
-  createdBy    String
-  updatedAt    DateTime?     @updatedAt
-  updatedBy    String?
+  references   String?   @db.VarChar(50)
+  remarks      String?   @db.VarChar(100)
+  createdAt    DateTime  @default(now())
+  createdBy    String    @db.VarChar(50)
+  updatedAt    DateTime? @updatedAt
+  updatedBy    String?   @db.VarChar(50)
   deleted      DateTime?
-  deletedBy    String?
-  User1        Users         @relation("createdByUserId", fields: [createdBy], references: [id])
-  User2        Users?        @relation("updatedByUserId", fields: [updatedBy], references: [id])
-  User3        Users?        @relation("deletedByUserId", fields: [deletedBy], references: [id])
-  Product      Products      @relation(fields: [productId], references: [id])
+  deletedBy    String?   @db.VarChar(50)
+
+  User1 Users  @relation("createdByUserId", fields: [createdBy], references: [id])
+  User2 Users? @relation("updatedByUserId", fields: [updatedBy], references: [id])
+  User3 Users? @relation("deletedByUserId", fields: [deletedBy], references: [id])
+
+  Product Products @relation(fields: [productId], references: [id])
+
   StockAccount StockAccounts @relation(fields: [account], references: [id])
 }
 
@@ -442,8 +475,18 @@ model InventoryJournalPhysical {
 // Description--: 
 // 
 
+// MigrationName: init-new-state
+// At-----------: 20230528194452
+// Description--: 
+// restore all fields in tables
+
+// MigrationName: Remove-all-fields-to-sequences-fields
+// At-----------: 20230528192800
+// Description--: 
+// remove all fields in tables except id to sequence fields creation
+
 // MigrationName: Remove-Enum-Create-Update-Transactions-Tables
-// At-----------: 
+// At-----------: 20230528181853
 // Description--: 
 // change fields with enum into Int, update Procurements table.
 // create ProcurementReturns table.
