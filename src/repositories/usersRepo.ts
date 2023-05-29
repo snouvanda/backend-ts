@@ -3,6 +3,7 @@ import { UserRole, UserApproval } from "../enums/dbEnums"
 import { merge } from "lodash"
 import { TargetValue } from "../enums/generalEnums"
 import { USER_ROLES, USER_APPROVAL } from "./lookup_list"
+import { GotUser } from "types/custom"
 
 const prisma = new PrismaClient()
 const defaultCreator: string = process.env.DEFAULT_CREATOR || "enviro-dv"
@@ -129,25 +130,39 @@ export const createNewUser = async (values: Record<string, any>) => {
       regApproval: true,
     },
   })
-  let user_app = {
-    id: user.id,
-    email: user.email,
-    name: user.name,
-    phone: user.phone,
-    requestedRole: UserRoleToApp(user.requestedRole),
-    role: UserRoleToApp(user.role),
-    isActive: user.isActive,
-    regApproval: UserApprovalToApp(user.regApproval),
+  if (user) {
+    const user_app = {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      phone: user.phone,
+      requestedRole: UserRoleToApp(user.requestedRole),
+      role: UserRoleToApp(user.role),
+      isActive: user.isActive,
+      regApproval: UserApprovalToApp(user.regApproval),
+    }
+    return user_app
   }
-  return user_app
+  return user //if no user
 }
 
-export const getUsers = async () => {
+export const getUsers = async (): Promise<GotUser[] | {}> => {
   const users = await prisma.users.findMany({
     where: activeRowCriteria,
     select: merge(identityFields, infoFields, privilegeFields, metaFields),
   })
-  return users
+  if (users) {
+    let users_app = users.map((user) => {
+      return {
+        ...user,
+        requestedRole: UserRoleToApp(user.requestedRole),
+        role: UserRoleToApp(user.role),
+        regApproval: UserApprovalToApp(user.regApproval),
+      }
+    })
+    return users_app
+  }
+  return {}
 }
 
 export const getUserExistanceByEmail = async (email: string) => {
