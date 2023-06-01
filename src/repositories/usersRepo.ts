@@ -277,21 +277,45 @@ export const dELETERefreshToken = async (token: string) => {
   return tokenDeleted
 }
 
-export const getUserRegApprovalAllRoles = async (status: UserApproval) => {
+export const getUserRegApprovalAllRoles = async (
+  status: UserApproval,
+): Promise<GotUser[] | {}> => {
   const users = await prisma.users.findMany({
     where: merge({ regApproval: status }, activeRowCriteria),
     select: merge(identityFields, infoFields, privilegeFields, metaFields),
   })
+  if (users) {
+    let users_app = users.map((user) => {
+      return {
+        ...user,
+        requestedRole: UserRoleToApp(user.requestedRole),
+        role: UserRoleToApp(user.role),
+        regApproval: UserApprovalToApp(user.regApproval),
+      }
+    })
+    return users_app
+  }
   return users
 }
 
 export const getUserRegApprovalByRequestedRole = async (
   status: UserApproval,
   requestedRole: UserRole,
-) => {
+): Promise<GotUser[] | {}> => {
   const users = await prisma.users.findMany({
     where: merge({ regApproval: status, requestedRole }, activeRowCriteria),
     select: merge(identityFields, infoFields, privilegeFields, metaFields),
   })
-  return users
+  if (users) {
+    let users_app = users.map((user) => {
+      return {
+        ...user,
+        requestedRole: UserRoleToApp(user.requestedRole),
+        role: UserRoleToApp(user.role),
+        regApproval: UserApprovalToApp(user.regApproval),
+      }
+    })
+    return users_app
+  }
+  return {}
 }
