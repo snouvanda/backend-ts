@@ -11,7 +11,7 @@ import {
   getUserByRefreshToken,
   saveRefreshToken,
 } from "../repositories/usersRepo"
-import { encRole } from "../config/roles_list"
+import { shiftRole } from "../config/roles_list"
 import { cookieStandarOption } from "../config/cookie_option"
 
 export const handleRefreshToken = async (req: Request, res: Response) => {
@@ -72,7 +72,7 @@ export const handleRefreshToken = async (req: Request, res: Response) => {
   // role is change with number from role_list to disguise role in token
   const payload = {
     userId: foundUser.id,
-    role: encRole(foundUser.role),
+    role: shiftRole(foundUser.role),
   }
 
   // create new accessToken and refreshToken

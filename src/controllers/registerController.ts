@@ -6,13 +6,18 @@ import {
   createNewUser,
   getUserExistanceByEmail,
 } from "../repositories/usersRepo"
+import { toPropercase } from "../helpers/stringHelper"
 
 export const registerUser = async (req: Request, res: Response) => {
   console.log("")
   console.log("User try to register")
   try {
     // Prepare inputs.
-    const { email, name, phone, password, requestedRole } = req.body
+    let { email, name, phone, password, requestedRole } = req.body
+
+    // change  case to Propercase
+    if (name) name = toPropercase(name)
+    if (requestedRole) requestedRole = toPropercase(requestedRole)
 
     //
     // Check if inputs available.

@@ -1,11 +1,12 @@
 import { PrismaClient, Prisma } from "@prisma/client"
-import { enumRole } from "@prisma/client"
+import { UserApproval } from "../enums/dbEnums"
+// import { enumRole } from "@prisma/client"
 
 import { merge } from "lodash"
 
 const prisma = new PrismaClient()
 const defaultCreator: string = process.env.DEFAULT_CREATOR || "enviro-dv"
-let userRole: enumRole
+// let userRole: enumRole
 
 const defaultFields = {
   id: true,
@@ -180,7 +181,7 @@ export const createUser = async (values: Record<string, any>) => {
       requestedRole: requestedRole,
       role: role,
       isActive: isActive,
-      regApproval: "pending",
+      regApproval: UserApproval.Pending,
       salt: salt,
       password: password,
       createdBy: creator,

@@ -1,4 +1,3 @@
-import { enumRole } from "@prisma/client"
 import { Request, Response, NextFunction } from "express"
 
 // type RoleSelection = {

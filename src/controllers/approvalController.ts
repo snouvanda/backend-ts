@@ -3,10 +3,11 @@ import {
   getUserRegApprovalAllRoles,
   getUserRegApprovalByRequestedRole,
 } from "../repositories/usersRepo"
-import { enumApproval as Approval, enumRole as Role } from "@prisma/client"
+// import { enumApproval as Approval, enumRole as Role } from "@prisma/client"
+import { UserApproval as Approval, UserRole as Role } from "../enums/dbEnums"
 
 export const getAllRegApprovalRequest = async (req: Request, res: Response) => {
-  const users = await getUserRegApprovalAllRoles(Approval.pending)
+  const users = await getUserRegApprovalAllRoles(Approval.Pending)
   if (!users) return res.sendStatus(404)
 
   return res.status(200).json({ users })
@@ -17,8 +18,8 @@ export const getAdminRegApprovalRequest = async (
   res: Response,
 ) => {
   const users = await getUserRegApprovalByRequestedRole(
-    Approval.pending,
-    Role.admin,
+    Approval.Pending,
+    Role.Admin,
   )
   if (!users) return res.sendStatus(404)
 
@@ -30,8 +31,8 @@ export const getEmployeeRegApprovalRequest = async (
   res: Response,
 ) => {
   const users = await getUserRegApprovalByRequestedRole(
-    Approval.pending,
-    Role.employee,
+    Approval.Pending,
+    Role.Employee,
   )
   if (!users) return res.sendStatus(404)
 
@@ -43,8 +44,8 @@ export const getCustomerRegApprovalRequest = async (
   res: Response,
 ) => {
   const users = await getUserRegApprovalByRequestedRole(
-    Approval.pending,
-    Role.customer,
+    Approval.Pending,
+    Role.Customer,
   )
   if (!users) return res.sendStatus(404)
 
@@ -56,8 +57,8 @@ export const getShipperRegApprovalRequest = async (
   res: Response,
 ) => {
   const users = await getUserRegApprovalByRequestedRole(
-    Approval.pending,
-    Role.shipper,
+    Approval.Pending,
+    Role.Shipper,
   )
   if (!users) return res.sendStatus(404)
 
@@ -69,8 +70,8 @@ export const getSupplierRegApprovalRequest = async (
   res: Response,
 ) => {
   const users = await getUserRegApprovalByRequestedRole(
-    Approval.pending,
-    Role.supplier,
+    Approval.Pending,
+    Role.Supplier,
   )
   if (!users) return res.sendStatus(404)
 
@@ -82,8 +83,8 @@ export const getGuestRegApprovalRequest = async (
   res: Response,
 ) => {
   const users = await getUserRegApprovalByRequestedRole(
-    Approval.pending,
-    Role.guest,
+    Approval.Pending,
+    Role.Guest,
   )
   if (!users) return res.sendStatus(404)
 
