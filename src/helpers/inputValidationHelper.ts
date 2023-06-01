@@ -1,7 +1,20 @@
 import { merge } from "lodash"
 // import { enumRole } from "@prisma/client"
-import { UserRole } from "../enums/dbEnums"
 import dra, { setFault } from "./faultMsgHelper" //developer recommended action after error occured.
+import {
+  DbEnumLookupValidation,
+  ProcurementInput,
+  SupplierLookupValidation,
+} from "../types/custom"
+import {
+  PaymentMethod,
+  PaymentStatus,
+  ProcurementTrx,
+  ShipmentLoadStatus,
+  StockAccount,
+  UserRole,
+} from "../enums/dbEnums"
+import { getSupplierExistanceById } from "../repositories/suppliersRepo"
 
 export const isEmailValid = (email: string) => {
   // TODO: find method to validate email string
@@ -41,6 +54,7 @@ export const isPasswordValid = (password: string) => {
 //          [faultElement2]:{message: "", msg2Dev: ""}
 //         }}
 //
+
 export const isRegistrationInputsValid = async (
   email: string,
   name: string,
@@ -97,4 +111,203 @@ export const isRegistrationInputsValid = async (
 
   // if has any fault
   return { faults }
+}
+
+export const isSupplierIdValid = async (
+  supplierId: string,
+): Promise<SupplierLookupValidation> => {
+  const supplier = await getSupplierExistanceById(supplierId)
+
+  if (supplier) {
+    return {
+      validation: true,
+      supplierId: supplierId,
+      alias: "",
+      companyName: "",
+    }
+  }
+  return {
+    validation: false,
+    supplierId: "",
+    alias: "",
+    companyName: "",
+  }
+}
+
+export const isProcurementTrxValid = (
+  transaction: number | string,
+): DbEnumLookupValidation => {
+  if (typeof transaction === "number") {
+    if (transaction in ProcurementTrx) {
+      return {
+        validation: true,
+        dbValue: transaction,
+        appValue: "",
+      }
+    }
+  } else if (typeof transaction === "string") {
+    if (transaction in ProcurementTrx) {
+      return {
+        validation: true,
+        dbValue: 1,
+        appValue: transaction,
+      }
+    }
+  }
+  return {
+    validation: false,
+    dbValue: -1,
+    appValue: "",
+  }
+}
+
+export const isStockAccountValid = (
+  account: number | string,
+): DbEnumLookupValidation => {
+  if (typeof account === "number") {
+    if (account in StockAccount) {
+      return {
+        validation: true,
+        dbValue: account,
+        appValue: "",
+      }
+    }
+  } else if (typeof account === "string") {
+    if (account in StockAccount) {
+      return {
+        validation: true,
+        dbValue: 1,
+        appValue: account,
+      }
+    }
+  }
+  return {
+    validation: false,
+    dbValue: -1,
+    appValue: "",
+  }
+}
+
+export const isShipmentLoadStatusValid = (
+  loadStatus: number | string,
+): DbEnumLookupValidation => {
+  if (typeof loadStatus === "number") {
+    if (loadStatus in ShipmentLoadStatus) {
+      return {
+        validation: true,
+        dbValue: loadStatus,
+        appValue: "",
+      }
+    }
+  } else if (typeof loadStatus === "string") {
+    if (loadStatus in ShipmentLoadStatus) {
+      return {
+        validation: true,
+        dbValue: 1,
+        appValue: loadStatus,
+      }
+    }
+  }
+  return {
+    validation: false,
+    dbValue: -1,
+    appValue: "",
+  }
+}
+
+export const isPaymentStatusValid = (
+  paymentStatus: number | string,
+): DbEnumLookupValidation => {
+  if (typeof paymentStatus === "number") {
+    if (paymentStatus in PaymentStatus) {
+      return {
+        validation: true,
+        dbValue: paymentStatus,
+        appValue: "",
+      }
+    }
+  } else if (typeof paymentStatus === "string") {
+    if (paymentStatus in PaymentStatus) {
+      return {
+        validation: true,
+        dbValue: 1,
+        appValue: paymentStatus,
+      }
+    }
+  }
+  return {
+    validation: false,
+    dbValue: -1,
+    appValue: "",
+  }
+}
+
+export const isPaidMethodValid = (
+  paidMethod: number | string,
+): DbEnumLookupValidation => {
+  if (typeof paidMethod === "number") {
+    if (paidMethod in PaymentMethod) {
+      return {
+        validation: true,
+        dbValue: paidMethod,
+        appValue: "",
+      }
+    }
+  } else if (typeof paidMethod === "string") {
+    if (paidMethod in PaymentMethod) {
+      return {
+        validation: true,
+        dbValue: 1,
+        appValue: paidMethod,
+      }
+    }
+  }
+  return {
+    validation: false,
+    dbValue: -1,
+    appValue: "",
+  }
+}
+
+export const isProcurementInputsValid = (inputs: ProcurementInput) => {
+  let inputsValidation = {
+    validation: false,
+    message: "",
+  }
+
+  const input: ProcurementInput = inputs
+
+  const validTransaction = isProcurementTrxValid(input.transaction)
+  if (!validTransaction.validation) {
+    inputsValidation.message = "Input is invalid: transaction"
+    return inputsValidation
+  }
+
+  const validAccount = isStockAccountValid(input.account)
+  if (!validAccount.validation) {
+    inputsValidation.message = "Input is invalid: account"
+    return inputsValidation
+  }
+
+  const validLoadStatus = isShipmentLoadStatusValid(input.loadStatus)
+  if (!validLoadStatus.validation) {
+    inputsValidation.message = "Input is invalid: loadStatus"
+    return inputsValidation
+  }
+
+  const validPaymentStatus = isPaymentStatusValid(input.paymentStatus)
+  if (!validPaymentStatus.validation) {
+    inputsValidation.message = "Input is invalid: paymentStatus"
+    return inputsValidation
+  }
+
+  const validPaidMethod = isPaidMethodValid(input.paidMethod)
+  if (!validPaidMethod.validation) {
+    inputsValidation.message = "Input is invalid: paidMethod"
+    return inputsValidation
+  }
+
+  inputsValidation.validation = true
+  inputsValidation.message = "inputs are valid"
+  return inputsValidation
 }

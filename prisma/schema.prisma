@@ -124,7 +124,7 @@ model Products {
 model Customers {
   id          String    @unique @db.VarChar(10) // example: CUS001
   userId      String?   @db.VarChar(50)
-  nameAlias   String    @db.VarChar(20)
+  alias       String    @db.VarChar(25)
   fullname    String?   @db.VarChar(50)
   cusType     Int // ref: enum CustomerType
   companyName String?   @db.VarChar(50)
@@ -152,6 +152,7 @@ model Customers {
 model Suppliers {
   id           String    @unique @db.VarChar(10) // example: SUP001
   userId       String?   @db.VarChar(50)
+  alias        String    @db.VarChar(25)
   companyName  String    @db.VarChar(50)
   contactName  String?   @db.VarChar(50)
   contactPhone String?   @db.VarChar(50)
@@ -176,6 +177,7 @@ model Suppliers {
 model Shippers {
   id           String    @unique @db.VarChar(10) // example: SHP001
   userId       String?   @db.VarChar(50)
+  alias        String    @db.VarChar(25)
   companyName  String    @db.VarChar(50)
   contactName  String?   @db.VarChar(50)
   contactPhone String?   @db.VarChar(50)
@@ -474,6 +476,11 @@ model InventoryJournalPhysical {
 // At-----------: 
 // Description--: 
 // 
+
+// MigrationName: Change-alias-at-master-tables
+// At-----------: 
+// Description--: 
+// Change alias fields in customers, suppliers, shippers tables.
 
 // MigrationName: init-new-state
 // At-----------: 20230528194452

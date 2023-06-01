@@ -9,8 +9,8 @@ export enum UserRole {
 }
 
 export enum UserApproval {
-  Pending = 0,
-  Approved = 1,
+  Pending = 1,
+  Approved = 2,
   Denied = 4,
 }
 
@@ -28,16 +28,16 @@ export enum StockAccount {
 }
 
 export enum ShipmentLoadStatus {
-  None = 0,
-  Partial = 1,
-  Full = 2,
+  None = 1,
+  Partial = 2,
+  Full = 3,
   Canceled = 4,
 }
 
 export enum PaymentStatus {
-  Unpaid = 0,
-  Partial = 1,
-  Full = 2,
+  Unpaid = 1,
+  Partial = 2,
+  Full = 3,
 }
 
 export enum PaymentMethod {
