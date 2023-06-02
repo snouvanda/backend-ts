@@ -9,8 +9,8 @@ export enum UserRole {
 }
 
 export enum UserApproval {
-  Pending = 0,
-  Approved = 1,
+  Pending = 1,
+  Approved = 2,
   Denied = 4,
 }
 
@@ -19,32 +19,33 @@ export enum ProcurementTrx {
   Pinjam = 2,
 }
 
-export enum StockAccount {
-  FKSMedan = 1,
-  FKSDepo = 2,
-  Toko = 3,
-  RimbunJaya = 4,
-  Aseng = 5,
-}
+// export enum StockAccount {
+//   FKSMedan = 1,
+//   FKSDepo = 2,
+//   Toko = 3,
+//   RimbunJaya = 4,
+//   Aseng = 5,
+// }
 
 export enum ShipmentLoadStatus {
-  None = 0,
-  Partial = 1,
-  Full = 2,
+  None = 1,
+  Partial = 2,
+  Full = 3,
   Canceled = 4,
 }
 
 export enum PaymentStatus {
-  Unpaid = 0,
-  Partial = 1,
-  Full = 2,
+  Unpaid = 1,
+  Partial = 2,
+  Full = 3,
 }
 
 export enum PaymentMethod {
   Bank = 1,
   Cash = 2,
   AccReceivable = 3,
-  Composite = 4,
+  None = 4,
+  Composite = 5,
 }
 
 export enum CustomerType {

@@ -2,7 +2,7 @@ import crypto from "crypto"
 import jwt from "jsonwebtoken"
 import { JWTPayload } from "../types/custom"
 
-const accessTokenExpiry: string = "15m"
+const accessTokenExpiry: string = "1h"
 const refreshTokenExpiry: string = "1h"
 
 export const random = () => crypto.randomBytes(16).toString("hex")
@@ -35,7 +35,9 @@ export const createRefresToken = async (payload: JWTPayload) => {
   })
 }
 
-export const decodeAccessToken = async (token: string): Promise<any> => {
+export const decodeAccessToken = async (
+  token: string,
+): Promise<JWTPayload | any> => {
   return jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!, (err, decoded) => {
     if (err) {
       return null
@@ -44,7 +46,9 @@ export const decodeAccessToken = async (token: string): Promise<any> => {
   })
 }
 
-export const decodeRefreshToken = async (token: string): Promise<any> => {
+export const decodeRefreshToken = async (
+  token: string,
+): Promise<JWTPayload | any> => {
   return jwt.verify(
     token,
     process.env.REFRESH_TOKEN_SECRET!,

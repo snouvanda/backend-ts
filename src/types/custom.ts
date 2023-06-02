@@ -26,3 +26,48 @@ export interface GotUser {
   updatedAt: Date | null
   updatedBy: string | null
 }
+
+export interface DbEnumLookupValidation {
+  validation: boolean
+  dbValue: number
+  appValue: string
+}
+
+export interface SupplierLookupValidation {
+  validation: boolean
+  supplierId: string
+  alias: string
+  companyName: string
+}
+
+export interface ProductLookupValidation {
+  validation: boolean
+  productId: number
+  alias: string
+  name: string
+}
+
+export interface StockAccountLookupValidation {
+  validation: boolean
+  accountId: number
+  account: string
+}
+
+export interface ProcurementInput {
+  trxDate: string
+  supplierId: string
+  transaction: number
+  productId: number
+  quantity: number
+  unitPrice: number
+  account: number
+  loadStatus: number
+  paymentStatus: number
+  paidAmount: number
+  paidMethod: number
+  paidAmtBank: number
+  paidAmtCash: number
+  paidAmtAccRcv: number
+  references?: string
+  remarks?: string
+}

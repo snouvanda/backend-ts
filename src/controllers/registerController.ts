@@ -20,7 +20,7 @@ export const registerUser = async (req: Request, res: Response) => {
     if (requestedRole) requestedRole = toPropercase(requestedRole)
 
     //
-    // Check if inputs available.
+    // Check if inputs are available.
     if (!email || !name || !password || !requestedRole) {
       let fault = setFault(
         "All mandatory fields are required.",

@@ -37,37 +37,40 @@ model Users {
   deleted       DateTime?
   deletedBy     String?   @db.VarChar(50)
 
-  Procurement1 Procurements[]       @relation("createdByUserId")
-  Procurement2 Procurements[]       @relation("updatedByUserId")
-  Procurement3 Procurements[]       @relation("deletedByUserId")
-  Sales1       SalesOrders[]        @relation("createdByUserId")
-  Sales2       SalesOrders[]        @relation("updatedByUserId")
-  Sales3       SalesOrders[]        @relation("deletedByUserId")
-  Customer     Customers[]          @relation("userId")
-  Customer1    Customers[]          @relation("createdByUserId")
-  Customer2    Customers[]          @relation("updatedByUserId")
-  Customer3    Customers[]          @relation("deletedByUserId")
-  Supplier     Suppliers[]          @relation("userId")
-  Supplier1    Suppliers[]          @relation("createdByUserId")
-  Supplier2    Suppliers[]          @relation("updatedByUserId")
-  Supplier3    Suppliers[]          @relation("deletedByUserId")
-  Product1     Products[]           @relation("createdByUserId")
-  Product2     Products[]           @relation("updatedByUserId")
-  Product3     Products[]           @relation("deletedByUserId")
-  Shipper      Shippers[]           @relation("userId")
-  Shipper1     Shippers[]           @relation("createdByUserId")
-  Shipper2     Shippers[]           @relation("updatedByUserId")
-  Shipper3     Shippers[]           @relation("deletedByUserId")
-  Token        Tokens[]             @relation("userId")
-  ProcReturn1  ProcurementReturns[] @relation("createdByUserId")
-  ProcReturn2  ProcurementReturns[] @relation("updatedByUserId")
-  ProcReturn3  ProcurementReturns[] @relation("deletedByUserId")
-  SalesReturn1 SalesReturns[]       @relation("createdByUserId")
-  SalesReturn2 SalesReturns[]       @relation("updatedByUserId")
-  SalesReturn3 SalesReturns[]       @relation("deletedByUserId")
-  Shipment1    Shipments[]          @relation("createdByUserId")
-  Shipment2    Shipments[]          @relation("updatedByUserId")
-  Shipment3    Shipments[]          @relation("deletedByUserId")
+  Procurement1  Procurements[]       @relation("createdByUserId")
+  Procurement2  Procurements[]       @relation("updatedByUserId")
+  Procurement3  Procurements[]       @relation("deletedByUserId")
+  Sales1        SalesOrders[]        @relation("createdByUserId")
+  Sales2        SalesOrders[]        @relation("updatedByUserId")
+  Sales3        SalesOrders[]        @relation("deletedByUserId")
+  Customer      Customers[]          @relation("userId")
+  Customer1     Customers[]          @relation("createdByUserId")
+  Customer2     Customers[]          @relation("updatedByUserId")
+  Customer3     Customers[]          @relation("deletedByUserId")
+  Supplier      Suppliers[]          @relation("userId")
+  Supplier1     Suppliers[]          @relation("createdByUserId")
+  Supplier2     Suppliers[]          @relation("updatedByUserId")
+  Supplier3     Suppliers[]          @relation("deletedByUserId")
+  Product1      Products[]           @relation("createdByUserId")
+  Product2      Products[]           @relation("updatedByUserId")
+  Product3      Products[]           @relation("deletedByUserId")
+  Shipper       Shippers[]           @relation("userId")
+  Shipper1      Shippers[]           @relation("createdByUserId")
+  Shipper2      Shippers[]           @relation("updatedByUserId")
+  Shipper3      Shippers[]           @relation("deletedByUserId")
+  Token         Tokens[]             @relation("userId")
+  ProcReturn1   ProcurementReturns[] @relation("createdByUserId")
+  ProcReturn2   ProcurementReturns[] @relation("updatedByUserId")
+  ProcReturn3   ProcurementReturns[] @relation("deletedByUserId")
+  SalesReturn1  SalesReturns[]       @relation("createdByUserId")
+  SalesReturn2  SalesReturns[]       @relation("updatedByUserId")
+  SalesReturn3  SalesReturns[]       @relation("deletedByUserId")
+  Shipment1     Shipments[]          @relation("createdByUserId")
+  Shipment2     Shipments[]          @relation("updatedByUserId")
+  Shipment3     Shipments[]          @relation("deletedByUserId")
+  StockAccount1 StockAccounts[]      @relation("createdByUserId")
+  StockAccount2 StockAccounts[]      @relation("updatedByUserId")
+  StockAccount3 StockAccounts[]      @relation("deletedByUserId")
 
   StockAdjustment1    StockAdjustments[]         @relation("createdByUserId")
   StockAdjustment2    StockAdjustments[]         @relation("updatedByUserId")
@@ -124,7 +127,7 @@ model Products {
 model Customers {
   id          String    @unique @db.VarChar(10) // example: CUS001
   userId      String?   @db.VarChar(50)
-  nameAlias   String    @db.VarChar(20)
+  alias       String    @db.VarChar(25)
   fullname    String?   @db.VarChar(50)
   cusType     Int // ref: enum CustomerType
   companyName String?   @db.VarChar(50)
@@ -152,6 +155,7 @@ model Customers {
 model Suppliers {
   id           String    @unique @db.VarChar(10) // example: SUP001
   userId       String?   @db.VarChar(50)
+  alias        String    @db.VarChar(25)
   companyName  String    @db.VarChar(50)
   contactName  String?   @db.VarChar(50)
   contactPhone String?   @db.VarChar(50)
@@ -176,6 +180,7 @@ model Suppliers {
 model Shippers {
   id           String    @unique @db.VarChar(10) // example: SHP001
   userId       String?   @db.VarChar(50)
+  alias        String    @db.VarChar(25)
   companyName  String    @db.VarChar(50)
   contactName  String?   @db.VarChar(50)
   contactPhone String?   @db.VarChar(50)
@@ -197,9 +202,19 @@ model Shippers {
 }
 
 model StockAccounts {
-  id      Int     @id @default(autoincrement())
-  account String  @unique @db.VarChar(20)
-  remarks String? @db.VarChar(100)
+  id        Int       @id @default(autoincrement())
+  account   String    @unique @db.VarChar(20)
+  remarks   String?   @db.VarChar(100)
+  createdAt DateTime  @default(now())
+  createdBy String    @db.VarChar(50)
+  updatedAt DateTime? @updatedAt
+  updatedBy String?   @db.VarChar(50)
+  deleted   DateTime?
+  deletedBy String?   @db.VarChar(50)
+
+  User1 Users  @relation("createdByUserId", fields: [createdBy], references: [id])
+  User2 Users? @relation("updatedByUserId", fields: [updatedBy], references: [id])
+  User3 Users? @relation("deletedByUserId", fields: [deletedBy], references: [id])
 
   Procurement        Procurements[]
   ProcReturn         ProcurementReturns[]
@@ -474,6 +489,16 @@ model InventoryJournalPhysical {
 // At-----------: 
 // Description--: 
 // 
+
+// MigrationName: add-metafields-into-stockaccounts-table
+// At-----------: 
+// Description--: 
+// add metafields into stockaccounts table
+
+// MigrationName: Change-alias-at-master-tables
+// At-----------: 20230601193748
+// Description--: 
+// Change alias fields in customers, suppliers, shippers tables.
 
 // MigrationName: init-new-state
 // At-----------: 20230528194452
