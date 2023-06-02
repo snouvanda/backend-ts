@@ -19,13 +19,13 @@ export enum ProcurementTrx {
   Pinjam = 2,
 }
 
-export enum StockAccount {
-  FKSMedan = 1,
-  FKSDepo = 2,
-  Toko = 3,
-  RimbunJaya = 4,
-  Aseng = 5,
-}
+// export enum StockAccount {
+//   FKSMedan = 1,
+//   FKSDepo = 2,
+//   Toko = 3,
+//   RimbunJaya = 4,
+//   Aseng = 5,
+// }
 
 export enum ShipmentLoadStatus {
   None = 1,

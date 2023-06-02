@@ -4,20 +4,14 @@ import { merge } from "lodash"
 import { TargetValue } from "../enums/generalEnums"
 import { USER_ROLES, USER_APPROVAL } from "./lookup_list"
 import { GotUser } from "types/custom"
+import {
+  activeRowCriteria,
+  deletedRowCriteria,
+  metaFields,
+} from "./recordConfig"
 
 const prisma = new PrismaClient()
 const defaultCreator: string = process.env.DEFAULT_CREATOR || "enviro-dv"
-
-// FIELDS FILTER
-const activeRowCriteria = {
-  deleted: null,
-  deletedBy: null,
-}
-
-const deletedRowCriteria = {
-  deleted: { not: null },
-  deletedBy: { not: null },
-}
 
 // FIELDS SELECTION
 const identityFields = {
@@ -40,13 +34,6 @@ const privilegeFields = {
 const credentialFields = {
   salt: true,
   password: true,
-}
-
-const metaFields = {
-  createdAt: true,
-  createdBy: true,
-  updatedAt: true,
-  updatedBy: true,
 }
 
 // UTILITY FUNCTIONS

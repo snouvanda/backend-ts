@@ -40,7 +40,7 @@ export const createProcurement = async (req: Request, res: Response) => {
 
     // Validate inputs value
     console.log("validating inputs ...")
-    const validInputs = isProcurementInputsValid(inputs)
+    const validInputs = await isProcurementInputsValid(inputs)
     if (!validInputs.validation) {
       console.log("input is invalid.")
       return res.status(400).json({ message: validInputs.message })

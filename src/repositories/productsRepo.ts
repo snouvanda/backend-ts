@@ -10,14 +10,14 @@ const prisma = new PrismaClient()
 
 // DB MANIPULATION FUNCTIONS
 
-export const getSupplierExistanceById = async (supplierId: string) => {
-  const supplier = await prisma.suppliers.findFirst({
-    where: merge({ id: supplierId }, activeRowCriteria),
+export const getProductExistanceById = async (productId: number) => {
+  const product = await prisma.products.findFirst({
+    where: merge({ id: productId }, activeRowCriteria),
     select: {
       id: true,
       alias: true,
-      companyName: true,
+      name: true,
     },
   })
-  return supplier
+  return product
 }

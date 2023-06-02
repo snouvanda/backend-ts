@@ -40,6 +40,19 @@ export interface SupplierLookupValidation {
   companyName: string
 }
 
+export interface ProductLookupValidation {
+  validation: boolean
+  productId: number
+  alias: string
+  name: string
+}
+
+export interface StockAccountLookupValidation {
+  validation: boolean
+  accountId: number
+  account: string
+}
+
 export interface ProcurementInput {
   trxDate: string
   supplierId: string
