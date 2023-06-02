@@ -20,9 +20,12 @@ import { getProductExistanceById } from "../repositories/productsRepo"
 import { getStockAccountExistanceById } from "../repositories/stockAccountsRepo"
 
 export const isEmailValid = (email: string) => {
-  // TODO: find method to validate email string
-  const validEmail = email
-  return true
+  const EMAIL_REGEX: RegExp = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+
+  const validEmail = EMAIL_REGEX.test(email)
+
+  if (validEmail) return true
+  return false
 }
 
 export const isNameValid = (name: string) => {
@@ -178,25 +181,17 @@ export const isStockAccountValid = async (
 }
 
 export const isProcurementTrxValid = (
-  transaction: number | string,
+  transaction: number,
 ): DbEnumLookupValidation => {
-  if (typeof transaction === "number") {
-    if (transaction in ProcurementTrx) {
-      return {
-        validation: true,
-        dbValue: transaction,
-        appValue: "",
-      }
-    }
-  } else if (typeof transaction === "string") {
-    if (transaction in ProcurementTrx) {
-      return {
-        validation: true,
-        dbValue: 1,
-        appValue: transaction,
-      }
+  if (transaction in ProcurementTrx) {
+    return {
+      validation: true,
+      dbValue: transaction,
+      appValue: ProcurementTrx[transaction],
     }
   }
+
+  // if invalid
   return {
     validation: false,
     dbValue: -1,
@@ -204,53 +199,18 @@ export const isProcurementTrxValid = (
   }
 }
 
-// export const isStockAccountValid = (
-//   account: number | string,
-// ): DbEnumLookupValidation => {
-//   if (typeof account === "number") {
-//     if (account in StockAccount) {
-//       return {
-//         validation: true,
-//         dbValue: account,
-//         appValue: "",
-//       }
-//     }
-//   } else if (typeof account === "string") {
-//     if (account in StockAccount) {
-//       return {
-//         validation: true,
-//         dbValue: 1,
-//         appValue: account,
-//       }
-//     }
-//   }
-//   return {
-//     validation: false,
-//     dbValue: -1,
-//     appValue: "",
-//   }
-// }
-
 export const isShipmentLoadStatusValid = (
-  loadStatus: number | string,
+  loadStatus: number,
 ): DbEnumLookupValidation => {
-  if (typeof loadStatus === "number") {
-    if (loadStatus in ShipmentLoadStatus) {
-      return {
-        validation: true,
-        dbValue: loadStatus,
-        appValue: "",
-      }
-    }
-  } else if (typeof loadStatus === "string") {
-    if (loadStatus in ShipmentLoadStatus) {
-      return {
-        validation: true,
-        dbValue: 1,
-        appValue: loadStatus,
-      }
+  if (loadStatus in ShipmentLoadStatus) {
+    return {
+      validation: true,
+      dbValue: loadStatus,
+      appValue: ShipmentLoadStatus[loadStatus],
     }
   }
+
+  // if invalid
   return {
     validation: false,
     dbValue: -1,
@@ -259,25 +219,17 @@ export const isShipmentLoadStatusValid = (
 }
 
 export const isPaymentStatusValid = (
-  paymentStatus: number | string,
+  paymentStatus: number,
 ): DbEnumLookupValidation => {
-  if (typeof paymentStatus === "number") {
-    if (paymentStatus in PaymentStatus) {
-      return {
-        validation: true,
-        dbValue: paymentStatus,
-        appValue: "",
-      }
-    }
-  } else if (typeof paymentStatus === "string") {
-    if (paymentStatus in PaymentStatus) {
-      return {
-        validation: true,
-        dbValue: 1,
-        appValue: paymentStatus,
-      }
+  if (paymentStatus in PaymentStatus) {
+    return {
+      validation: true,
+      dbValue: paymentStatus,
+      appValue: PaymentStatus[paymentStatus],
     }
   }
+
+  // if invalid
   return {
     validation: false,
     dbValue: -1,
@@ -286,25 +238,17 @@ export const isPaymentStatusValid = (
 }
 
 export const isPaidMethodValid = (
-  paidMethod: number | string,
+  paidMethod: number,
 ): DbEnumLookupValidation => {
-  if (typeof paidMethod === "number") {
-    if (paidMethod in PaymentMethod) {
-      return {
-        validation: true,
-        dbValue: paidMethod,
-        appValue: "",
-      }
-    }
-  } else if (typeof paidMethod === "string") {
-    if (paidMethod in PaymentMethod) {
-      return {
-        validation: true,
-        dbValue: 1,
-        appValue: paidMethod,
-      }
+  if (paidMethod in PaymentMethod) {
+    return {
+      validation: true,
+      dbValue: paidMethod,
+      appValue: PaymentMethod[paidMethod],
     }
   }
+
+  // if invalid
   return {
     validation: false,
     dbValue: -1,
@@ -313,119 +257,152 @@ export const isPaidMethodValid = (
 }
 
 export const isNumberInputValid = (value: any) => {
-  if (typeof value === "number") {
+  if (typeof value === "number" && value >= 0) {
     return {
       validation: true,
       value: value,
     }
-    return {
-      validation: false,
-      value: null,
-    }
+  }
+
+  // if invalid
+  return {
+    validation: false,
+    value: null,
   }
 }
 
-export const isDateInputValid = (date: string) => {
-  // TODO: how to validate date value
+export const isDateInputValid = (date: any) => {
+  const DATE_REGEX: RegExp = /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/
+
+  const validDate = DATE_REGEX.test(date)
+
+  if (validDate) {
+    return {
+      validation: true,
+      value: date,
+    }
+  }
+
+  // if invalid
   return {
-    validation: true,
-    date: date,
+    validation: false,
+    value: null,
   }
 }
 
 export const isProcurementInputsValid = async (inputs: ProcurementInput) => {
-  let inputsValidation = {
-    validation: false,
-    message: "",
-  }
-
+  // destructure inputs
   const input: ProcurementInput = inputs
 
+  let inputsValidation = { validation: false }
+  let invalids: string[] = []
+  let validationState: boolean = true
+
   const validDate = isDateInputValid(input.trxDate)
-  if (!validDate) {
-    inputsValidation.message = "Input is invalid: trxDate"
-    return inputsValidation
+  console.log("validDate: ", validDate)
+  if (!validDate.validation) {
+    invalids.push("trxDate")
+    validationState = false
   }
 
   const validSupplier = await isSupplierIdValid(input.supplierId)
-  if (!validSupplier) {
-    inputsValidation.message = "Input is invalid: supplierId"
-    return inputsValidation
+  console.log("validSupplier: ", validSupplier)
+  if (!validSupplier.validation) {
+    invalids.push("supplierId")
+    validationState = false
   }
 
   const validTransaction = isProcurementTrxValid(input.transaction)
+  console.log("validTransaction: ", validTransaction)
   if (!validTransaction.validation) {
-    inputsValidation.message = "Input is invalid: transaction"
-    return inputsValidation
+    invalids.push("transaction")
+    validationState = false
   }
 
   const validProduct = await isProductIdValid(input.productId)
-  if (!validProduct) {
-    inputsValidation.message = "Input is invalid: productId"
-    return inputsValidation
+  console.log("validProduct: ", validProduct)
+  if (!validProduct.validation) {
+    invalids.push("productId")
+    validationState = false
   }
 
   const validQuantity = isNumberInputValid(input.quantity)
-  if (!validQuantity) {
-    inputsValidation.message = "Input is invalid: quantity"
-    return inputsValidation
+  console.log("validQuantity: ", validQuantity)
+  if (!validQuantity.validation) {
+    invalids.push("quantity")
+    validationState = false
   }
 
   const validUnitPrice = isNumberInputValid(input.unitPrice)
-  if (!validUnitPrice) {
-    inputsValidation.message = "Input is invalid: unitPrice"
-    return inputsValidation
+  console.log("validUnitPrice: ", validUnitPrice)
+  if (!validUnitPrice.validation) {
+    invalids.push("unitPrice")
+    validationState = false
   }
 
   const validAccount = await isStockAccountValid(input.account)
+  console.log("validAccount: ", validAccount)
   if (!validAccount.validation) {
-    inputsValidation.message = "Input is invalid: account"
-    return inputsValidation
+    invalids.push("account")
+    validationState = false
   }
 
   const validLoadStatus = isShipmentLoadStatusValid(input.loadStatus)
+  console.log("validLoadStatus: ", validLoadStatus)
   if (!validLoadStatus.validation) {
-    inputsValidation.message = "Input is invalid: loadStatus"
-    return inputsValidation
+    invalids.push("loadStatus")
+    validationState = false
   }
 
   const validPaymentStatus = isPaymentStatusValid(input.paymentStatus)
+  console.log("validPaymentStatus: ", validPaymentStatus)
   if (!validPaymentStatus.validation) {
-    inputsValidation.message = "Input is invalid: paymentStatus"
-    return inputsValidation
+    invalids.push("paymentStatus")
+    validationState = false
   }
 
   const validPaidAmount = isNumberInputValid(input.paidAmount)
-  if (!validPaidAmount) {
-    inputsValidation.message = "Input is invalid: paidAmount"
-    return inputsValidation
+  console.log("validPaidAmount: ", validPaidAmount)
+  if (!validPaidAmount.validation) {
+    invalids.push("paidAmount")
+    validationState = false
   }
 
   const validPaidMethod = isPaidMethodValid(input.paidMethod)
+  console.log("validPaidMethod: ", validPaidMethod)
   if (!validPaidMethod.validation) {
-    inputsValidation.message = "Input is invalid: paidMethod"
-    return inputsValidation
+    invalids.push("paidMethod")
+    validationState = false
   }
 
   const validPaidAmtBank = isNumberInputValid(input.paidAmtBank)
-  if (!validPaidAmtBank) {
-    inputsValidation.message = "Input is invalid: paidAmtBank"
-    return inputsValidation
+  console.log("validPaidAmtBank: ", validPaidAmtBank)
+  if (!validPaidAmtBank.validation) {
+    invalids.push("paidAmtBank")
+    validationState = false
   }
 
   const validPaidAmtCash = isNumberInputValid(input.paidAmtCash)
-  if (!validPaidAmtCash) {
-    inputsValidation.message = "Input is invalid: paidAmtCash"
-    return inputsValidation
+  console.log("validPaidAmtCash: ", validPaidAmtCash)
+  if (!validPaidAmtCash.validation) {
+    invalids.push("paidAmtCash")
+    validationState = false
   }
 
   const validPaidAmtAccRcv = isNumberInputValid(input.paidAmtAccRcv)
-  if (!validPaidAmtAccRcv) {
-    inputsValidation.message = "Input is invalid: paidAmtAccRcv"
-    return inputsValidation
+  console.log("validPaidAmtAccRcv: ", validPaidAmtAccRcv)
+  if (!validPaidAmtAccRcv.validation) {
+    invalids.push("paidAmtAccRcv")
+    validationState = false
   }
 
-  inputsValidation.validation = true
-  inputsValidation.message = "inputs are valid"
-  return inputsValidation
+  console.log("invalids: ", invalids)
+  console.log("validationState: ", validationState)
+
+  if (validationState) {
+    inputsValidation.validation = true
+  } else inputsValidation.validation = false
+
+  let finalValidation = merge(inputsValidation, { invalids: invalids })
+  return finalValidation
 }

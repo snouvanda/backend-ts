@@ -56,7 +56,7 @@ export interface StockAccountLookupValidation {
 export interface ProcurementInput {
   trxDate: string
   supplierId: string
-  transaction: number | string
+  transaction: number
   productId: number
   quantity: number
   unitPrice: number

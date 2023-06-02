@@ -44,7 +44,8 @@ export enum PaymentMethod {
   Bank = 1,
   Cash = 2,
   AccReceivable = 3,
-  Composite = 4,
+  None = 4,
+  Composite = 5,
 }
 
 export enum CustomerType {
